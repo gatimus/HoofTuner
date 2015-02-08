@@ -16,36 +16,6 @@ public class Song {
     public VoteURLs vote_urls;
     public External external;
 
-    public class External {
-        public EQBeats eqbeats;
-        public BronyTunes bronytunes;
-
-        public class EQBeats{
-            public String id;
-            public String hash;
-            public String timestamp;
-            public String artist;
-            public String title;
-            public String web_url;
-            public String image_url;
-        }
-
-        public class BronyTunes{
-            public String id;
-            public String hash;
-            public String timestamp;
-            public String artist;
-            public String title;
-            public String album;
-            public String description;
-            public String lyrics;
-            public String web_url;
-            public String image_url;
-            public String youtube_url;
-            public String purchase_url;
-        }
-    }
-
     public class Rating {
         public int likes;
         public int dislikes;
@@ -61,5 +31,6 @@ public class Song {
     @Override
     public String toString(){
         return title;
-    }
-}
+    } //toString
+
+} //class

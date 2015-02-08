@@ -6,9 +6,12 @@ import com.google.gson.Gson;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -32,8 +35,10 @@ public class APIWorker {
 
 
     public boolean getStatus(){
+        boolean currentStatus = false;
         APIStatus status = new Gson().fromJson(getResponse(API_STATUS).result, APIStatus.class);
-        return status.online;
+        currentStatus = status.online;
+        return currentStatus;
     }
 
     public List<Station> listStations(){
@@ -71,14 +76,26 @@ public class APIWorker {
 
     public APIResponse getResponse(String url){
         APIResponse apiResponse = null;
+        HttpUriRequest httpGet = new HttpGet(url);
+        HttpClient httpClient = new DefaultHttpClient();
+        Reader reader = null;
         try {
-            HttpResponse httpResponse = new DefaultHttpClient().execute(new HttpGet(url));
+            HttpResponse httpResponse = httpClient.execute(httpGet);
             if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-                Reader reader = new InputStreamReader(httpResponse.getEntity().getContent());
+                reader = new InputStreamReader(httpResponse.getEntity().getContent());
                 apiResponse = new Gson().fromJson(reader, APIResponse.class);
             }
-        }catch (Exception e){
+        }catch (IOException e){
             Log.e(getClass().getSimpleName(), e.toString());
+        }finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+                Log.e(getClass().getSimpleName(), e.toString());
+            }
+            httpClient.getConnectionManager().shutdown();
         }
         return apiResponse;
     }

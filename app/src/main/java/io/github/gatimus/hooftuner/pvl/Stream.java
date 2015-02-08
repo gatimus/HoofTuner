@@ -1,6 +1,7 @@
 package io.github.gatimus.hooftuner.pvl;
 
 public class Stream {
+
     public int id;
     public String name;
     public String url;
@@ -10,5 +11,6 @@ public class Stream {
     @Override
     public String toString(){
         return name;
-    }
-}
+    } //toString
+
+} //class

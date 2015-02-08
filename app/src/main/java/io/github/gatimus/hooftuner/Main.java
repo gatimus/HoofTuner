@@ -1,6 +1,7 @@
 package io.github.gatimus.hooftuner;
 
 import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -37,8 +38,12 @@ public class Main extends ActionBarActivity {
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private ActionBar actionBar;
     private ListView listView;
-    private TextView songText;
+    private TextView songArtist;
+    private TextView songTitle;
+    private TextView songDescription;
+    private TextView songLyrics;
     private ImageView songImage;
+    private ImageView stationBG;
     private Station selectedStation;
     private APIWorker api;
     private BGW bgw;
@@ -73,15 +78,98 @@ public class Main extends ActionBarActivity {
                 drawerLayout.closeDrawers();
                 selectedStation = (Station) parent.getItemAtPosition(position);
                 actionBar.setTitle(selectedStation.name);
+                Picasso picasso = Picasso.with(getApplicationContext());
+                if (BuildConfig.DEBUG) {
+                    picasso.setIndicatorsEnabled(true);
+                }
+                switch (selectedStation.shortcode) {
+                    case "ponyvillefm":
+                        picasso.load("http://www.ponyvillefm.com/images/covers/aeriel-cover1.png")
+                                .into(stationBG);
+                        break;
+                    case "luna_radio":
+                        picasso.load("http://www.lunaloves.us/cache/thumbs/2668ef27702f31d6d007ab88228f3a39-contain-800x500.png")
+                                .into(stationBG);
+                        break;
+                    case "fillydelphia_radio":
+                        picasso.load("https://fillydelphiaradio.net/wp-content/uploads/2014/10/cityscape-day.jpg")
+                                .into(stationBG);
+                        break;
+                    case "celestia_radio":
+                        picasso.load("http://celestiaradio.com/wp-content/themes/CelestiaRadio/Images/BG/MPC-Layer-for.png")
+                                .into(stationBG);
+                        break;
+                    case "best_pony_radio" :
+                        picasso.load("http://www.bestponyradio.com/bprbg.jpg")
+                                .resize(2048,2048)
+                                .into(stationBG);
+                        break;
+                    case "sonic_radioboom" :
+                        picasso.load("http://sonicradioboom.co.uk/wp-content/uploads/2013/10/bodybg.jpg")
+                                .into(stationBG);
+                        break;
+                    case "alicorn_radio" :
+                        picasso.load("http://alicornradio.com/wp-content/uploads/2015/01/copy-alicorn_radio_header_by_giratina3456-d6j5lxb.jpg")
+                                .into(stationBG);
+                        break;
+                    case "the_hive_radio" :
+                        picasso.load("https://hiveradio.net/wp-content/themes/The%20Hive%20Radio/images/site-background.jpg")
+                                .into(stationBG);
+                        break;
+                    case "wonderbolt_radio" :
+                        //TODO
+                        break;
+                    case "everypony_radio" :
+                        picasso.load("http://www.everypony.com/forums/images/springbg.png")
+                                .into(stationBG);
+                        break;
+                    case "bronydom_radio" :
+                        picasso.load("http://www.bronydom.net/resources/castle.png")
+                                .into(stationBG);
+                        break;
+                    case "radio_brony" :
+                        picasso.load("http://www.radiobrony.fr/wp-content/uploads/2013/01/fondrb.png")
+                                .into(stationBG);
+                        break;
+                    case "brony_radio_germany" :
+                        picasso.load("http://www.bronyradiogermany.com/wp-content/themes/brg_winter/image/header_1.png")
+                                .into(stationBG);
+                        break;
+                    case "bronies_radio_la" :
+                        picasso.load("http://www.mlp-la.com/wp-content/themes/MLP/images/bg2.jpg")
+                                .into(stationBG);
+                        break;
+                    case "powerponies_radio" :
+                        picasso.load("http://www.powerponies.cz/img/bg5.jpg")
+                                .into(stationBG);
+                        break;
+                    case "radio_mybrony" :
+                        picasso.load("http://radio.mybrony.ru/wp-content/uploads/2015/01/artworks-000068981865-kma2ds-original.png")
+                                .into(stationBG);
+                        break;
+                    default :
+                        //TODO
+                        break;
+                }
             }
         });
-        songText = (TextView) findViewById(R.id.songText);
+        songArtist = (TextView) findViewById(R.id.songArtist);
+        songArtist.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/SourceSansPro-Regular.ttf"));
+        songTitle = (TextView) findViewById(R.id.songTitle);
+        songTitle.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/SourceSansPro-Regular.ttf"));
+        songDescription = (TextView) findViewById(R.id.songDescription);
+        songLyrics = (TextView) findViewById(R.id.songLyrics);
         songImage = (ImageView) findViewById(R.id.songImage);
+        stationBG = (ImageView) findViewById(R.id.stationBG);
         api = new APIWorker();
         bgw = new BGW();
         updateScheduler = Executors.newScheduledThreadPool(1);
         updater = new Updater();
-        bgw.execute();
+        //bgw.execute();
+        stations = Global.stations;
+        stationAdapter = new StationAdapter(getApplicationContext(), stations);
+        stationAdapter.setNotifyOnChange(true);
+        listView.setAdapter(stationAdapter);
     }
 
     @Override
@@ -95,7 +183,7 @@ public class Main extends ActionBarActivity {
     protected void onStart(){
         super.onStart();
         Log.v(getClass().getSimpleName(), "start");
-        scheduledUpdate = updateScheduler.scheduleWithFixedDelay(updater, 0 , 1000, TimeUnit.MILLISECONDS);
+        scheduledUpdate = updateScheduler.scheduleWithFixedDelay(updater, 0 , 2000, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -164,36 +252,55 @@ public class Main extends ActionBarActivity {
             if(selectedStation != null){
                 nowPlaying = api.getNowPlaying(selectedStation.shortcode);
                 Log.v(getClass().getSimpleName(), nowPlaying.current_song.text);
+                Log.d(getClass().getSimpleName(), selectedStation.shortcode);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        songText.setText(nowPlaying.current_song.text);
+                        songArtist.setText(nowPlaying.current_song.artist);
+                        songTitle.setText(nowPlaying.current_song.title);
+
+
                         Picasso picasso = Picasso.with(getApplicationContext());
                         if(BuildConfig.DEBUG){
                             picasso.setIndicatorsEnabled(true);
                         }
-                        if(nowPlaying.current_song.external.bronytunes != null){
-                            picasso.load(nowPlaying.current_song.external.bronytunes.image_url)
-                                    .placeholder(android.R.drawable.stat_sys_download)
-                                    .error(android.R.drawable.stat_sys_download)
-                                    .into(songImage);
-                        }else if(nowPlaying.current_song.external.eqbeats != null){
-                            picasso.load(nowPlaying.current_song.external.eqbeats.image_url)
-                                    .placeholder(android.R.drawable.stat_sys_download)
-                                    .error(android.R.drawable.stat_sys_download)
-                                    .into(songImage);
-                        }else if (selectedStation.shortcode == "ponyvillefm"){
+                        if(nowPlaying.current_song.external != null){
+                            if(nowPlaying.current_song.external.bronytunes != null){
+                                songDescription.setText(nowPlaying.current_song.external.bronytunes.description);
+                                songLyrics.setText(nowPlaying.current_song.external.bronytunes.lyrics);
+                                picasso.load(nowPlaying.current_song.external.bronytunes.image_url)
+                                        .placeholder(android.R.drawable.stat_sys_download)
+                                        .error(android.R.drawable.ic_menu_close_clear_cancel)
+                                        .into(songImage);
+                            }else if (nowPlaying.current_song.external.ponyfm != null){
+                                songDescription.setText(nowPlaying.current_song.external.ponyfm.description);
+                                songLyrics.setText(nowPlaying.current_song.external.ponyfm.lyrics);
+                                picasso.load(nowPlaying.current_song.external.ponyfm.image_url)
+                                        .placeholder(android.R.drawable.stat_sys_download)
+                                        .error(android.R.drawable.ic_menu_close_clear_cancel)
+                                        .into(songImage);
+                            }else if(nowPlaying.current_song.external.eqbeats != null) {
+                                picasso.load(nowPlaying.current_song.external.eqbeats.image_url)
+                                        .placeholder(android.R.drawable.stat_sys_download)
+                                        .error(android.R.drawable.ic_menu_close_clear_cancel)
+                                        .into(songImage);
+                            }
+                        }else if (selectedStation.shortcode.equals("ponyvillefm")) {
                             picasso.load("http://ponyvillefm.com/images/music/default.png")
                                     .placeholder(android.R.drawable.stat_sys_download)
-                                    .error(android.R.drawable.stat_sys_download)
+                                    .error(android.R.drawable.ic_menu_close_clear_cancel)
+                                    .into(songImage);
+                        }else if(selectedStation.shortcode.equals("fillydelphia_radio")){
+                            picasso.load("https://fillydelphiaradio.net/wp-content/themes/delphia_reimagined/player/nocover.jpg")
+                                    .placeholder(android.R.drawable.stat_sys_download)
+                                    .error(android.R.drawable.ic_menu_close_clear_cancel)
                                     .into(songImage);
                         }else{
-                            picasso.load("http://bronytunes.com/images/song-white.png")
+                            picasso.load("http://ponyvillelive.com/static/images/song_generic.png")
                                     .placeholder(android.R.drawable.stat_sys_download)
-                                    .error(android.R.drawable.stat_sys_download)
+                                    .error(android.R.drawable.ic_menu_close_clear_cancel)
                                     .into(songImage);
                         }
-
                     }
                 });
             }
