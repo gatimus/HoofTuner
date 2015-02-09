@@ -40,18 +40,19 @@ public class Main extends ActionBarActivity {
     private ListView listView;
     private TextView songArtist;
     private TextView songTitle;
-    private TextView songDescription;
-    private TextView songLyrics;
+    //private TextView songDescription;
+    //private TextView songLyrics;
     private ImageView songImage;
     private ImageView stationBG;
     private Station selectedStation;
     private APIWorker api;
-    private BGW bgw;
+    //private BGW bgw;
     private ScheduledExecutorService updateScheduler;
     private ScheduledFuture scheduledUpdate;
     private Updater updater;
     private List<Station> stations;
     private ArrayAdapter<Station> stationAdapter;
+    private TweetFragment tweetFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +79,8 @@ public class Main extends ActionBarActivity {
                 drawerLayout.closeDrawers();
                 selectedStation = (Station) parent.getItemAtPosition(position);
                 actionBar.setTitle(selectedStation.name);
+                tweetFragment = TweetFragment.newInstance(selectedStation);
+                getFragmentManager().beginTransaction().replace(R.id.tweetFragmentContainer, tweetFragment).commit();
                 Picasso picasso = Picasso.with(getApplicationContext());
                 if (BuildConfig.DEBUG) {
                     picasso.setIndicatorsEnabled(true);
@@ -157,12 +160,12 @@ public class Main extends ActionBarActivity {
         songArtist.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/SourceSansPro-Regular.ttf"));
         songTitle = (TextView) findViewById(R.id.songTitle);
         songTitle.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/SourceSansPro-Regular.ttf"));
-        songDescription = (TextView) findViewById(R.id.songDescription);
-        songLyrics = (TextView) findViewById(R.id.songLyrics);
+        //songDescription = (TextView) findViewById(R.id.songDescription);
+        //songLyrics = (TextView) findViewById(R.id.songLyrics);
         songImage = (ImageView) findViewById(R.id.songImage);
         stationBG = (ImageView) findViewById(R.id.stationBG);
         api = new APIWorker();
-        bgw = new BGW();
+        //bgw = new BGW();
         updateScheduler = Executors.newScheduledThreadPool(1);
         updater = new Updater();
         //bgw.execute();
@@ -170,6 +173,9 @@ public class Main extends ActionBarActivity {
         stationAdapter = new StationAdapter(getApplicationContext(), stations);
         stationAdapter.setNotifyOnChange(true);
         listView.setAdapter(stationAdapter);
+
+
+
     }
 
     @Override
@@ -266,15 +272,15 @@ public class Main extends ActionBarActivity {
                         }
                         if(nowPlaying.current_song.external != null){
                             if(nowPlaying.current_song.external.bronytunes != null){
-                                songDescription.setText(nowPlaying.current_song.external.bronytunes.description);
-                                songLyrics.setText(nowPlaying.current_song.external.bronytunes.lyrics);
+                                //songDescription.setText(nowPlaying.current_song.external.bronytunes.description);
+                                //songLyrics.setText(nowPlaying.current_song.external.bronytunes.lyrics);
                                 picasso.load(nowPlaying.current_song.external.bronytunes.image_url)
                                         .placeholder(android.R.drawable.stat_sys_download)
                                         .error(android.R.drawable.ic_menu_close_clear_cancel)
                                         .into(songImage);
                             }else if (nowPlaying.current_song.external.ponyfm != null){
-                                songDescription.setText(nowPlaying.current_song.external.ponyfm.description);
-                                songLyrics.setText(nowPlaying.current_song.external.ponyfm.lyrics);
+                                //songDescription.setText(nowPlaying.current_song.external.ponyfm.description);
+                                //songLyrics.setText(nowPlaying.current_song.external.ponyfm.lyrics);
                                 picasso.load(nowPlaying.current_song.external.ponyfm.image_url)
                                         .placeholder(android.R.drawable.stat_sys_download)
                                         .error(android.R.drawable.ic_menu_close_clear_cancel)
