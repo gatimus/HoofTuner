@@ -21,6 +21,8 @@ public class PonyvilleLive {
         @GET("/nowplaying/index/station/{shortcode}")
         void nowPlaying(@Path("shortcode")String shortcode, Callback<APIResponse> cb);
 
+        //Schedules
+
 
         @GET("/index/status")
         void getStatus(Callback<APIResponse> cb);
