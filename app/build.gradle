@@ -32,4 +32,6 @@ dependencies {
     compile 'org.twitter4j:twitter4j-core:4.0.2'
     compile 'org.twitter4j:twitter4j-stream:4.0.2'
     compile 'org.twitter4j:twitter4j-async:4.0.2'
+    compile 'com.squareup.okhttp:okhttp:2.2.0'
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
 }
