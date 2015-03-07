@@ -30,7 +30,7 @@ public class PonyvilleLive {
 
     }
 
-    public static PonyvilleLiveInterface getPoPonyvilleLiveInterface(){
+    public static PonyvilleLiveInterface getPonyvilleLiveInterface(){
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("http://ponyvillelive.com/api")
