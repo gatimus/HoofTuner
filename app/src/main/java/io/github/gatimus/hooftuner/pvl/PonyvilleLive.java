@@ -15,17 +15,17 @@ public class PonyvilleLive {
     public static interface PonyvilleLiveInterface{
 
         @GET("/nowplaying")
-        void nowPlaying(Callback<APIResponse> cb);
+        void nowPlaying(Callback<Response<NowPlaying>> cb);
         @GET("/nowplaying/index/id/{id}")
-        void nowPlaying(@Path("id")int id, Callback<APIResponse> cb);
+        void nowPlaying(@Path("id")int id, Callback<Response<NowPlaying>> cb);
         @GET("/nowplaying/index/station/{shortcode}")
-        void nowPlaying(@Path("shortcode")String shortcode, Callback<APIResponse> cb);
+        void nowPlaying(@Path("shortcode")String shortcode, Callback<Response<NowPlaying>> cb);
 
         //Schedules
 
 
         @GET("/index/status")
-        void getStatus(Callback<APIResponse> cb);
+        void getStatus(Callback<Response<APIStatus>> cb);
 
 
     }
