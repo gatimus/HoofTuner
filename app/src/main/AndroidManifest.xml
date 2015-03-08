@@ -3,6 +3,7 @@
     package="io.github.gatimus.hooftuner" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -29,7 +30,7 @@
         </activity>
 
         <service
-            android:name=".LoadService"
+            android:name=".MusicService"
             android:exported="false" >
         </service>
 

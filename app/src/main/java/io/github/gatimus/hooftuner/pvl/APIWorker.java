@@ -36,7 +36,7 @@ public class APIWorker {
 
     public boolean getStatus(){
         boolean currentStatus = false;
-        APIStatus status = new Gson().fromJson(getResponse(API_STATUS).result, APIStatus.class);
+        Status status = new Gson().fromJson(getResponse(API_STATUS).result, Status.class);
         currentStatus = status.online;
         return currentStatus;
     }

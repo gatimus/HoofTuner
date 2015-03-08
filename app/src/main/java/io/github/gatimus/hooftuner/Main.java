@@ -1,5 +1,6 @@
 package io.github.gatimus.hooftuner;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -28,8 +29,12 @@ import java.util.concurrent.TimeUnit;
 
 import io.github.gatimus.hooftuner.pvl.APIWorker;
 import io.github.gatimus.hooftuner.pvl.NowPlaying;
+import io.github.gatimus.hooftuner.pvl.PonyvilleLive;
 import io.github.gatimus.hooftuner.pvl.Station;
 import io.github.gatimus.hooftuner.pvl.StationAdapter;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class Main extends ActionBarActivity {
@@ -78,6 +83,13 @@ public class Main extends ActionBarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 drawerLayout.closeDrawers();
                 selectedStation = (Station) parent.getItemAtPosition(position);
+                Intent iStop = new Intent(Main.this, MusicService.class)
+                        .setAction(MusicService.ACTION_STOP);
+                Main.this.startService(iStop);
+                Intent iStart = new Intent(Main.this, MusicService.class)
+                        .setAction(MusicService.ACTION_PLAY)
+                        .putExtra(MusicService.KEY_STREAM_URL, selectedStation.stream_url.toString());
+                Main.this.startService(iStart);
                 actionBar.setTitle(selectedStation.name);
                 tweetFragment = TweetFragment.newInstance(selectedStation);
                 getFragmentManager().beginTransaction().replace(R.id.tweetFragmentContainer, tweetFragment).commit();
@@ -189,7 +201,7 @@ public class Main extends ActionBarActivity {
     protected void onStart(){
         super.onStart();
         Log.v(getClass().getSimpleName(), "start");
-        scheduledUpdate = updateScheduler.scheduleWithFixedDelay(updater, 0 , 2000, TimeUnit.MILLISECONDS);
+        scheduledUpdate = updateScheduler.scheduleWithFixedDelay(updater, 0 , 30_000, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -256,59 +268,72 @@ public class Main extends ActionBarActivity {
         public void run() {
             Log.v(getClass().getSimpleName(), "update");
             if(selectedStation != null){
-                nowPlaying = api.getNowPlaying(selectedStation.shortcode);
-                Log.v(getClass().getSimpleName(), nowPlaying.current_song.text);
-                Log.d(getClass().getSimpleName(), selectedStation.shortcode);
-                runOnUiThread(new Runnable() {
+                //nowPlaying = api.getNowPlaying(selectedStation.shortcode);
+                PonyvilleLive.getPonyvilleLiveInterface().nowPlaying(selectedStation.shortcode, new Callback<io.github.gatimus.hooftuner.pvl.Response<NowPlaying>>(){
+
                     @Override
-                    public void run() {
-                        songArtist.setText(nowPlaying.current_song.artist);
-                        songTitle.setText(nowPlaying.current_song.title);
+                    public void success(io.github.gatimus.hooftuner.pvl.Response<NowPlaying> nowPlayingResponse, Response response) {
+                        nowPlaying = nowPlayingResponse.result;
+                        Log.v(getClass().getSimpleName(), nowPlaying.current_song.text);
+                        Log.d(getClass().getSimpleName(), selectedStation.shortcode);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                songArtist.setText(nowPlaying.current_song.artist);
+                                songTitle.setText(nowPlaying.current_song.title);
 
 
-                        Picasso picasso = Picasso.with(getApplicationContext());
-                        if(BuildConfig.DEBUG){
-                            picasso.setIndicatorsEnabled(true);
-                        }
-                        if(nowPlaying.current_song.external != null){
-                            if(nowPlaying.current_song.external.bronytunes != null){
-                                //songDescription.setText(nowPlaying.current_song.external.bronytunes.description);
-                                //songLyrics.setText(nowPlaying.current_song.external.bronytunes.lyrics);
-                                picasso.load(nowPlaying.current_song.external.bronytunes.image_url)
-                                        .placeholder(android.R.drawable.stat_sys_download)
-                                        .error(android.R.drawable.ic_menu_close_clear_cancel)
-                                        .into(songImage);
-                            }else if (nowPlaying.current_song.external.ponyfm != null){
-                                //songDescription.setText(nowPlaying.current_song.external.ponyfm.description);
-                                //songLyrics.setText(nowPlaying.current_song.external.ponyfm.lyrics);
-                                picasso.load(nowPlaying.current_song.external.ponyfm.image_url)
-                                        .placeholder(android.R.drawable.stat_sys_download)
-                                        .error(android.R.drawable.ic_menu_close_clear_cancel)
-                                        .into(songImage);
-                            }else if(nowPlaying.current_song.external.eqbeats != null) {
-                                picasso.load(nowPlaying.current_song.external.eqbeats.image_url)
-                                        .placeholder(android.R.drawable.stat_sys_download)
-                                        .error(android.R.drawable.ic_menu_close_clear_cancel)
-                                        .into(songImage);
+                                Picasso picasso = Picasso.with(getApplicationContext());
+                                if(BuildConfig.DEBUG){
+                                    picasso.setIndicatorsEnabled(true);
+                                }
+                                if(nowPlaying.current_song.external != null){
+                                    if(nowPlaying.current_song.external.bronytunes != null){
+                                        //songDescription.setText(nowPlaying.current_song.external.bronytunes.description);
+                                        //songLyrics.setText(nowPlaying.current_song.external.bronytunes.lyrics);
+                                        picasso.load(nowPlaying.current_song.external.bronytunes.image_url.toString())
+                                                .placeholder(android.R.drawable.stat_sys_download)
+                                                .error(android.R.drawable.ic_menu_close_clear_cancel)
+                                                .into(songImage);
+                                    }else if (nowPlaying.current_song.external.ponyfm != null){
+                                        //songDescription.setText(nowPlaying.current_song.external.ponyfm.description);
+                                        //songLyrics.setText(nowPlaying.current_song.external.ponyfm.lyrics);
+                                        picasso.load(nowPlaying.current_song.external.ponyfm.image_url.toString())
+                                                .placeholder(android.R.drawable.stat_sys_download)
+                                                .error(android.R.drawable.ic_menu_close_clear_cancel)
+                                                .into(songImage);
+                                    }else if(nowPlaying.current_song.external.eqbeats != null) {
+                                        picasso.load(nowPlaying.current_song.external.eqbeats.image_url.toString())
+                                                .placeholder(android.R.drawable.stat_sys_download)
+                                                .error(android.R.drawable.ic_menu_close_clear_cancel)
+                                                .into(songImage);
+                                    }
+                                }else if (selectedStation.shortcode.equals("ponyvillefm")) {
+                                    picasso.load("http://ponyvillefm.com/images/music/default.png")
+                                            .placeholder(android.R.drawable.stat_sys_download)
+                                            .error(android.R.drawable.ic_menu_close_clear_cancel)
+                                            .into(songImage);
+                                }else if(selectedStation.shortcode.equals("fillydelphia_radio")){
+                                    picasso.load("https://fillydelphiaradio.net/wp-content/themes/delphia_reimagined/player/nocover.jpg")
+                                            .placeholder(android.R.drawable.stat_sys_download)
+                                            .error(android.R.drawable.ic_menu_close_clear_cancel)
+                                            .into(songImage);
+                                }else{
+                                    picasso.load("http://ponyvillelive.com/static/images/song_generic.png")
+                                            .placeholder(android.R.drawable.stat_sys_download)
+                                            .error(android.R.drawable.ic_menu_close_clear_cancel)
+                                            .into(songImage);
+                                }
                             }
-                        }else if (selectedStation.shortcode.equals("ponyvillefm")) {
-                            picasso.load("http://ponyvillefm.com/images/music/default.png")
-                                    .placeholder(android.R.drawable.stat_sys_download)
-                                    .error(android.R.drawable.ic_menu_close_clear_cancel)
-                                    .into(songImage);
-                        }else if(selectedStation.shortcode.equals("fillydelphia_radio")){
-                            picasso.load("https://fillydelphiaradio.net/wp-content/themes/delphia_reimagined/player/nocover.jpg")
-                                    .placeholder(android.R.drawable.stat_sys_download)
-                                    .error(android.R.drawable.ic_menu_close_clear_cancel)
-                                    .into(songImage);
-                        }else{
-                            picasso.load("http://ponyvillelive.com/static/images/song_generic.png")
-                                    .placeholder(android.R.drawable.stat_sys_download)
-                                    .error(android.R.drawable.ic_menu_close_clear_cancel)
-                                    .into(songImage);
-                        }
+                        });
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
                     }
                 });
+
             }
         }
     }

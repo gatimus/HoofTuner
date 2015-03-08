@@ -2,18 +2,24 @@ package io.github.gatimus.hooftuner.pvl;
 
 import com.google.gson.JsonElement;
 
+import java.net.URL;
+import java.util.Date;
+
 public abstract class ExternalObject {
 
     public String __initializer__;
     public String __cloner__;
     public JsonElement[] lazyPropertiesDefaults;
-    public String id;
+    public int id;
     public String hash;
-    public String timestamp;
+    public Date timestamp;
+    public Date created;
+    public Date updated;
     public String artist;
     public String title;
-    public String web_url;
-    public String image_url;
+    public URL web_url;
+    public URL image_url;
+    public URL download_url;
 
     @Override
     public String toString(){

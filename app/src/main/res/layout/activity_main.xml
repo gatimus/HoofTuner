@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/listenersIcon"
-                android:src="@android:drawable/sym_contact_card"
+                android:src="@android:drawable/stat_sys_headset"
                 android:layout_below="@id/songTitle"
                 android:layout_toRightOf="@id/songImage"/>
 

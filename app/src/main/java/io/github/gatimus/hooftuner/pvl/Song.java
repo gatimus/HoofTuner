@@ -1,5 +1,7 @@
 package io.github.gatimus.hooftuner.pvl;
 
+import java.net.URL;
+
 public class Song {
 
     public String id;
@@ -23,9 +25,9 @@ public class Song {
     }
 
     public class VoteURLs {
-        public String like;
-        public String dislike;
-        public String clearvote;
+        public URL like;
+        public URL dislike;
+        public URL clearvote;
     }
 
     @Override

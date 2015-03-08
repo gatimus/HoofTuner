@@ -69,7 +69,7 @@ public class TweetFragment extends ListFragment implements ListView.OnItemClickL
         Log.v("TweetFragment", "newInstance");
         TweetFragment fragment = new TweetFragment();
         Bundle args = new Bundle();
-        args.putString(TWITTER_URL, station.twitter_url);
+        args.putString(TWITTER_URL, station.twitter_url.toString());
         fragment.setArguments(args);
         return fragment;
     }

@@ -1,9 +1,11 @@
 package io.github.gatimus.hooftuner.pvl;
 
-public class APIStatus {
+import java.util.Date;
+
+public class Status {
 
     public boolean online;
-    public int timestamp;
+    public Date timestamp;
 
 } //class
 

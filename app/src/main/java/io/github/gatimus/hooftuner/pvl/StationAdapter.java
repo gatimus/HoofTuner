@@ -42,7 +42,7 @@ public class StationAdapter extends ArrayAdapter<Station> {
         if(BuildConfig.DEBUG){
             picasso.setIndicatorsEnabled(true);
         }
-        picasso.load(stations.get(position).image_url)
+        picasso.load(stations.get(position).image_url.toString())
                 .placeholder(android.R.drawable.stat_sys_download)
                 .error(android.R.drawable.ic_menu_close_clear_cancel)
                 .into(stationImage);

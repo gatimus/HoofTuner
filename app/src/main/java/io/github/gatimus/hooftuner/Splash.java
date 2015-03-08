@@ -3,20 +3,22 @@ package io.github.gatimus.hooftuner;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
-
-import java.util.List;
-
-import io.github.gatimus.hooftuner.pvl.APIWorker;
+import java.util.Arrays;
+import io.github.gatimus.hooftuner.pvl.PonyvilleLive;
+import io.github.gatimus.hooftuner.pvl.Response;
 import io.github.gatimus.hooftuner.pvl.Station;
-
+import io.github.gatimus.hooftuner.pvl.Status;
+import retrofit.Callback;
+import retrofit.RetrofitError;
 
 public class Splash extends Activity {
 
     private TextView progressText;
     private Intent intent;
+    private PonyvilleLive.PonyvilleLiveInterface ponyvilleLiveInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,41 +27,42 @@ public class Splash extends Activity {
         progressText = (TextView) findViewById(R.id.progressText);
         progressText.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/SourceSansPro-Regular.ttf"));
         intent = new Intent(this, Main.class);
-        new PreLoader().execute();
-    }
+        ponyvilleLiveInterface = PonyvilleLive.getPonyvilleLiveInterface();
 
-    public class PreLoader extends AsyncTask<Void, String, List<Station>>{
+        ponyvilleLiveInterface.getStatus(new Callback<Response<Status>>() {
 
-        APIWorker api;
+            @Override
+            public void success(Response<Status> statusResponse, retrofit.client.Response response) {
 
-        @Override
-        protected void onPreExecute() {
-            api = new APIWorker();
-        }
+                progressText.setText(statusResponse.result.timestamp.toString());
+                if(statusResponse.result.online){
+                    ponyvilleLiveInterface.listStations(new Callback<Response<Station[]>>() {
 
-        @Override
-        protected List<Station> doInBackground(Void... params) {
-            List<Station> stations = null;
-            if(api.getStatus()){
-                publishProgress("online");
-                stations = api.listStations();
-                publishProgress("done");
-            }else{
-                publishProgress("down");
+                        @Override
+                        public void success(Response<Station[]> stationResponse, retrofit.client.Response response) {
+                            Global.stations = Arrays.asList(stationResponse.result);
+                            progressText.setText("Done");
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            Log.e(getClass().getSimpleName(), error.toString());
+                            progressText.setText("Celestia is not accepting letters :(");
+                        }
+                    });
+                } else {
+                    Log.e(getClass().getSimpleName(), "API down");
+                    progressText.setText("Celestia is not accepting letters :(");
+                }
             }
-            return stations;
-        }
 
-        @Override
-        protected void onProgressUpdate(String... progress) {
-            progressText.setText(progress[0]);
-        }
-
-        @Override
-        protected void onPostExecute(List<Station> result){
-            Global.stations = result;
-            startActivity(intent);
-        }
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e(getClass().getSimpleName(), error.toString());
+                progressText.setText("Celestia is not accepting letters :(");
+            }
+        });
     }
 
 }

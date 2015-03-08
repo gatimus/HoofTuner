@@ -1,5 +1,6 @@
 package io.github.gatimus.hooftuner;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -61,6 +62,24 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                     stopPlayback();
                 break;
         }
+        Notification notification = new Notification.Builder(getApplicationContext())
+                //.setCategory(Notification.CATEGORY_SERVICE)
+                .setOngoing(true)
+                //.setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setTicker("Ticker")
+                .setContentText("Content Text")
+                .setContentInfo("Content Info")
+                .setContentTitle("Content Title")
+                .setSubText("Sub text")
+                //.setStyle(new Notification.MediaStyle()
+                    //.setMediaSession(player.getAudioSessionId())
+                //)
+                .setStyle(new Notification.BigTextStyle()
+                    .bigText("big text")
+                    .setBigContentTitle("big title")
+                    .setSummaryText("summary"))
+                .build();
+        startForeground(START_STICKY, notification);
         return START_STICKY;
     }
 
@@ -124,10 +143,12 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
             player = null;
         }
 
-        if(wifiLock != null) {
-            wifiLock.release();
-            wifiLock = null;
-        }
+        if(wifiLock != null)
+            if(wifiLock.isHeld()){
+                wifiLock.release();
+                wifiLock = null;
+            }
+
     }
 
 
