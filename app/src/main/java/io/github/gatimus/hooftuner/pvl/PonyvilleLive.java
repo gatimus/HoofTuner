@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 
 import io.github.gatimus.hooftuner.BuildConfig;
 import retrofit.Callback;
@@ -38,7 +39,7 @@ public class PonyvilleLive {
         void clearVote(@Path("sh_id")int sh_id, Callback<Response<String>> cb);
 
         @GET("/station/list")
-        void listStations(Callback<Response<Station[]>> cb);
+        void listStations(Callback<Response<List<Station>>> cb);
         @GET("/station/list/category/{audio|video}")
         void listStations(@Path("audio|video")String category, Callback<Response<Station[]>> cb);
 

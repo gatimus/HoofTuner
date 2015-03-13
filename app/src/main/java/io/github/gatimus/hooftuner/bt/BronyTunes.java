@@ -1,5 +1,7 @@
 package io.github.gatimus.hooftuner.bt;
 
+import android.net.Uri;
+
 import io.github.gatimus.hooftuner.BuildConfig;
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -28,10 +30,30 @@ public class BronyTunes {
                 .setEndpoint("http://bronytunes.com")
                 .build();
 
-        if(BuildConfig.DEBUG){
+        if(BuildConfig.DEBUG)
             restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
-        }
 
         return restAdapter.create(BronyTunesInterface.class);
+    }
+
+    public static Uri retrieveArtworkUri(int songID){
+        return new Uri.Builder()
+                .scheme("http")
+                .authority("bronytunes.com")
+                .appendPath("retrieve_artwork.php")
+                .appendQueryParameter("song_id", String.valueOf(songID))
+                .build();
+
+    }
+
+    public static Uri retrieveArtworkUri(int songID, int size){
+        return new Uri.Builder()
+                .scheme("http")
+                .authority("bronytunes.com")
+                .appendPath("retrieve_artwork.php")
+                .appendQueryParameter("song_id", String.valueOf(songID))
+                .appendQueryParameter("size", String.valueOf(size))
+                .build();
+
     }
 }
