@@ -1,8 +1,12 @@
 package io.github.gatimus.hooftuner.pvl;
 
 import java.net.URL;
+import java.util.List;
 
 public class Station {
+
+    public static final String AUDIO = "audio";
+    public static final String VIDEO = "video";
 
     public int id;
     public String name;
@@ -18,7 +22,7 @@ public class Station {
     public int default_stream_id;
     public URL player_url;
     public URL request_url;
-    public Stream[] streams;
+    public List<Stream> streams;
 
     @Override
     public String toString(){

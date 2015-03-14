@@ -16,8 +16,7 @@ import retrofit.http.Path;
 
 public class PonyvilleLive {
 
-    public static final String AUDIO = "audio";
-    public static final String VIDEO = "video";
+
 
     public static interface PonyvilleLiveInterface{
 
@@ -55,6 +54,7 @@ public class PonyvilleLive {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Date.class, new DateDeserializer())
                 .registerTypeAdapter(URL.class, new URLDeserializer())
+                .registerTypeAdapter(Event.class, new EventDeserializer())
                 .create();
 
         RestAdapter restAdapter = new RestAdapter.Builder()

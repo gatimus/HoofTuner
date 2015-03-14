@@ -1,21 +1,21 @@
 package io.github.gatimus.hooftuner.eqb;
 
-import java.util.ArrayList;
+import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
-/**
- * Created by william on 3/8/2015.
- */
 public class User {
 
     private int id;
     private String name;
     private String avatar;
     private String description;
+    @SerializedName("html_description")
     private String htmlDescription;
-    private List<Track> tracks = new ArrayList<Track>();
-    private List<Playlist> playlists = new ArrayList<Playlist>();
+    private List<Track> tracks;
+    private List<Playlist> playlists;
+    @SerializedName("num_favorites")
     private int numFavorites;
+    @SerializedName("num_followers")
     private int numFollowers;
     private String link;
 

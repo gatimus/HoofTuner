@@ -43,7 +43,6 @@ public class BronyTunes {
                 .appendPath("retrieve_artwork.php")
                 .appendQueryParameter("song_id", String.valueOf(songID))
                 .build();
-
     }
 
     public static Uri retrieveArtworkUri(int songID, int size){
@@ -54,6 +53,5 @@ public class BronyTunes {
                 .appendQueryParameter("song_id", String.valueOf(songID))
                 .appendQueryParameter("size", String.valueOf(size))
                 .build();
-
     }
 }

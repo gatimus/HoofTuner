@@ -1,7 +1,6 @@
 package io.github.gatimus.hooftuner;
 
 import android.app.Activity;
-import android.app.ListFragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,10 +9,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-
 import java.util.ArrayList;
 import java.util.Map;
-
 import io.github.gatimus.hooftuner.pvl.Station;
 import twitter4j.AccountSettings;
 import twitter4j.AsyncTwitter;
@@ -51,7 +48,7 @@ import twitter4j.auth.OAuth2Token;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.ConfigurationBuilder;
 
-public class TweetFragment extends ListFragment implements ListView.OnItemClickListener {
+public class TweetFragment extends android.support.v4.app.ListFragment implements ListView.OnItemClickListener {
 
     private static final String TWITTER_URL = "twitter_url";
     private String twitterURL;
@@ -98,16 +95,16 @@ public class TweetFragment extends ListFragment implements ListView.OnItemClickL
 
         ConfigurationBuilder cb = new ConfigurationBuilder();
         if(BuildConfig.DEBUG)cb.setDebugEnabled(true);
-        cb.setOAuthConsumerKey("--")
-                .setOAuthConsumerSecret("--")
-                .setOAuthAccessToken("--")
-                .setOAuthAccessTokenSecret("--");
+        cb.setOAuthConsumerKey("7mW6uHRl8gddAZCbKIYXYhTsI")
+                .setOAuthConsumerSecret("GIFuoOYD2M3LhTKwkdy1u4ushotItQab960dd8ZlFfCdJdSlVz")
+                .setOAuthAccessToken("602173599-jiWfmGF69RWHz0aJr1lTXxHnK9ONBQwGFjH76JKr")
+                .setOAuthAccessTokenSecret("ocPLhUJ2HupJU47sKqUOs99eiTM2SPGjpBYgPjwhNGdGK");
         ConfigurationBuilder cb2 = new ConfigurationBuilder();
         if(BuildConfig.DEBUG)cb2.setDebugEnabled(true);
-        cb2.setOAuthConsumerKey("--")
-                .setOAuthConsumerSecret("--")
-                .setOAuthAccessToken("--")
-                .setOAuthAccessTokenSecret("--");
+        cb2.setOAuthConsumerKey("7mW6uHRl8gddAZCbKIYXYhTsI")
+                .setOAuthConsumerSecret("GIFuoOYD2M3LhTKwkdy1u4ushotItQab960dd8ZlFfCdJdSlVz")
+                .setOAuthAccessToken("602173599-jiWfmGF69RWHz0aJr1lTXxHnK9ONBQwGFjH76JKr")
+                .setOAuthAccessTokenSecret("ocPLhUJ2HupJU47sKqUOs99eiTM2SPGjpBYgPjwhNGdGK");
         stream = new TwitterStreamFactory(cb.build()).getInstance();
         stream.addListener(new UserStreamListener() {
             @Override

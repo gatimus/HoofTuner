@@ -1,6 +1,7 @@
 package io.github.gatimus.hooftuner.pvl;
 
 import java.net.URL;
+import java.util.List;
 
 public class Stream {
 
@@ -14,7 +15,8 @@ public class Stream {
     public String format;
     public Listeners listeners;
     public Song current_song;
-    public SongHistory song_history;
+    public List<SongHistory> song_history;
+
 
     @Override
     public String toString(){
