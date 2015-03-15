@@ -95,16 +95,16 @@ public class TweetFragment extends android.support.v4.app.ListFragment implement
 
         ConfigurationBuilder cb = new ConfigurationBuilder();
         if(BuildConfig.DEBUG)cb.setDebugEnabled(true);
-        cb.setOAuthConsumerKey("7mW6uHRl8gddAZCbKIYXYhTsI")
-                .setOAuthConsumerSecret("GIFuoOYD2M3LhTKwkdy1u4ushotItQab960dd8ZlFfCdJdSlVz")
-                .setOAuthAccessToken("602173599-jiWfmGF69RWHz0aJr1lTXxHnK9ONBQwGFjH76JKr")
-                .setOAuthAccessTokenSecret("ocPLhUJ2HupJU47sKqUOs99eiTM2SPGjpBYgPjwhNGdGK");
+        cb.setOAuthConsumerKey("--")
+                .setOAuthConsumerSecret("--")
+                .setOAuthAccessToken("--")
+                .setOAuthAccessTokenSecret("--");
         ConfigurationBuilder cb2 = new ConfigurationBuilder();
         if(BuildConfig.DEBUG)cb2.setDebugEnabled(true);
-        cb2.setOAuthConsumerKey("7mW6uHRl8gddAZCbKIYXYhTsI")
-                .setOAuthConsumerSecret("GIFuoOYD2M3LhTKwkdy1u4ushotItQab960dd8ZlFfCdJdSlVz")
-                .setOAuthAccessToken("602173599-jiWfmGF69RWHz0aJr1lTXxHnK9ONBQwGFjH76JKr")
-                .setOAuthAccessTokenSecret("ocPLhUJ2HupJU47sKqUOs99eiTM2SPGjpBYgPjwhNGdGK");
+        cb2.setOAuthConsumerKey("--")
+                .setOAuthConsumerSecret("--")
+                .setOAuthAccessToken("--")
+                .setOAuthAccessTokenSecret("--");
         stream = new TwitterStreamFactory(cb.build()).getInstance();
         stream.addListener(new UserStreamListener() {
             @Override
