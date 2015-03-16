@@ -39,8 +39,8 @@ public class PonyvilleLive {
 
         @GET("/station/list")
         void listStations(Callback<Response<List<Station>>> cb);
-        @GET("/station/list/category/{audio|video}")
-        void listStations(@Path("audio|video")String category, Callback<Response<Station[]>> cb);
+        @GET("/station/list/category/{category}")
+        void listStations(@Path("category")String category, Callback<Response<List<Station>>> cb);
 
 
         @GET("/index/status")

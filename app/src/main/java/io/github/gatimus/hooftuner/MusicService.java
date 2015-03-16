@@ -1,6 +1,5 @@
 package io.github.gatimus.hooftuner;
 
-import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -62,6 +61,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                     stopPlayback();
                 break;
         }
+        /*
         Notification notification = new Notification.Builder(getApplicationContext())
                 //.setCategory(Notification.CATEGORY_SERVICE)
                 .setOngoing(true)
@@ -80,6 +80,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                     .setSummaryText("summary"))
                 .build();
         startForeground(START_STICKY, notification);
+        */
         return START_STICKY;
     }
 

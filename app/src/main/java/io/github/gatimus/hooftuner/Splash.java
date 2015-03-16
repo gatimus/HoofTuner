@@ -37,7 +37,7 @@ public class Splash extends Activity implements Callback<Response<Status>>{
     public void success(Response<Status> statusResponse, retrofit.client.Response response) {
         progressText.setText(statusResponse.result.timestamp.toString());
         if(statusResponse.result.online){
-            ponyvilleLiveInterface.listStations(new Callback<Response<List<Station>>>() {
+            ponyvilleLiveInterface.listStations(Station.AUDIO, new Callback<Response<List<Station>>>() {
 
                 @Override
                 public void success(Response<List<Station>> stationResponse, retrofit.client.Response response) {
