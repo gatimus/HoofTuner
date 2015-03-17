@@ -1,16 +1,13 @@
 package io.github.gatimus.hooftuner;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,12 +18,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.squareup.picasso.Picasso;
+
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
 import io.github.gatimus.hooftuner.pvl.APIWorker;
 import io.github.gatimus.hooftuner.pvl.NowPlaying;
 import io.github.gatimus.hooftuner.pvl.PonyvilleLive;
@@ -37,7 +37,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class Main extends ActionBarActivity implements Callback<io.github.gatimus.hooftuner.pvl.Response<NowPlaying>>{
+public class Main extends Activity implements Callback<io.github.gatimus.hooftuner.pvl.Response<NowPlaying>>{
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
@@ -74,7 +74,7 @@ public class Main extends ActionBarActivity implements Callback<io.github.gatimu
             //TODO
         };
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
-        actionBar = getSupportActionBar();
+        actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
         //setup drawer list
@@ -130,8 +130,8 @@ public class Main extends ActionBarActivity implements Callback<io.github.gatimu
 
         tweetFragment = TweetFragment.newInstance(stations.get(1)); //temp
         //viewPager
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
-        viewPager.setAdapter(new InfoPageAdapter(getSupportFragmentManager()));
+        //viewPager = (ViewPager) findViewById(R.id.viewPager);
+        //viewPager.setAdapter(new InfoPageAdapter(getFragmentManager()));
     }
 
     @Override
@@ -266,6 +266,7 @@ public class Main extends ActionBarActivity implements Callback<io.github.gatimu
         }
     }
 
+    /*
     public class InfoPageAdapter extends FragmentPagerAdapter {
 
         public InfoPageAdapter(FragmentManager fm) {
@@ -312,6 +313,8 @@ public class Main extends ActionBarActivity implements Callback<io.github.gatimu
             return 5;
         }
     }
+    */
+
 
     public void setBackGround(){
         Picasso picasso = Picasso.with(getApplicationContext());

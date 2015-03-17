@@ -2,10 +2,8 @@ package io.github.gatimus.hooftuner;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -18,16 +16,16 @@ import retrofit.RetrofitError;
 
 public class Splash extends Activity implements Callback<Response<Status>>{
 
-    private TextView progressText;
+    private PVLTextView progressText;
     private Intent intent;
     private PonyvilleLive.PonyvilleLiveInterface ponyvilleLiveInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActionBar().hide();
         setContentView(R.layout.activity_splash);
-        progressText = (TextView) findViewById(R.id.progressText);
-        progressText.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/SourceSansPro-Regular.ttf"));
+        progressText = (PVLTextView) findViewById(R.id.progressText);
         intent = new Intent(this, Main.class);
         ponyvilleLiveInterface = PonyvilleLive.getPonyvilleLiveInterface();
         ponyvilleLiveInterface.getStatus(this);

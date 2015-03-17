@@ -12,7 +12,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="1in"
+            android:layout_height="match_parent"
             android:id="@+id/songInfo">
 
             <ImageView
@@ -24,8 +24,8 @@
 
             <ImageView
                 android:id="@+id/songImage"
-                android:layout_width="1in"
-                android:layout_height="match_parent"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
@@ -63,10 +63,51 @@
                 android:layout_below="@id/songTitle"
                 android:layout_toRightOf="@id/songImage" />
 
+            <IconTextView
+                android:id="@+id/icon_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="{fa-user}"
+                android:layout_below="@id/event_upcoming"
+                android:layout_toRightOf="@id/songImage" />
+
+            <io.github.gatimus.hooftuner.IconToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOn="{fa-pause}"
+                android:textOff="{fa-play}"
+                android:layout_below="@id/icon_user"
+                android:layout_toRightOf="@id/songImage"
+                android:layout_centerInParent="true" />
+
+            <IconTextView
+                android:id="@+id/like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="{fa-thumbs-up}"
+                android:textColor="@color/like"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true" />
+            <TextView
+                android:id="@+id/score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100"
+                android:layout_below="@+id/like"
+                android:layout_alignParentRight="true" />
+            <IconTextView
+                android:id="@+id/dislike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="{fa-thumbs-down}"
+                android:textColor="@color/dislike"
+                android:layout_below="@+id/score"
+                android:layout_alignParentRight="true" />
 
 
         </RelativeLayout>
 
+        <!--
         <android.support.v4.view.ViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
@@ -80,6 +121,7 @@
                 android:layout_gravity="top"/>
 
         </android.support.v4.view.ViewPager>
+        -->
 
 
 
@@ -89,7 +131,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="@dimen/abc_search_view_preferred_width"
-        android:background="@android:color/background_dark"
+        android:background="@color/list_bg"
         android:layout_height="match_parent"
         android:layout_gravity="start">
 
