@@ -1,14 +1,15 @@
 package io.github.gatimus.hooftuner.pvl;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.IconTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.joanzapata.android.iconify.Iconify;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -29,23 +30,26 @@ public class StationAdapter extends ArrayAdapter<Station> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = LayoutInflater.from(context);
         View rowView = inflater.inflate(R.layout.station_list_item, parent, false);
-        TextView name = (TextView) rowView.findViewById(android.R.id.text1);
-        name.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/SourceSansPro-Regular.ttf"));
-        TextView genre = (TextView) rowView.findViewById(android.R.id.text2);
-        genre.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/SourceSansPro-Regular.ttf"));
+        Station station = stations.get(position);
+
         ImageView stationImage = (ImageView) rowView.findViewById(R.id.stationImage);
-        name.setText(stations.get(position).name);
-        genre.setText(stations.get(position).genre);
+        TextView name = (TextView) rowView.findViewById(android.R.id.text1);
+        TextView genre = (TextView) rowView.findViewById(android.R.id.text2);
+        IconTextView category = (IconTextView) rowView.findViewById(R.id.category);
+
+        name.setText(station.name);
+        genre.setText(station.genre);
         Picasso picasso = Picasso.with(context);
-        if(BuildConfig.DEBUG){
-            picasso.setIndicatorsEnabled(true);
-        }
-        picasso.load(stations.get(position).image_url.toString())
+        if(BuildConfig.DEBUG) picasso.setIndicatorsEnabled(true);
+        picasso.load(station.image_url.toString())
                 .placeholder(android.R.drawable.stat_sys_download)
                 .error(android.R.drawable.ic_menu_close_clear_cancel)
                 .into(stationImage);
+        if(station.category.equals(Station.AUDIO)) category.setText(Iconify.compute("{fa-headphones}"));
+        if(station.category.equals(Station.VIDEO)) category.setText(Iconify.compute("{fa-desktop}"));
+
         return rowView;
     } //getView
 

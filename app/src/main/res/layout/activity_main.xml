@@ -131,7 +131,6 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="@dimen/abc_search_view_preferred_width"
-        android:background="@color/list_bg"
         android:layout_height="match_parent"
         android:layout_gravity="start">
 
