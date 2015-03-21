@@ -4,7 +4,10 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -20,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -31,7 +35,6 @@ import io.github.gatimus.hooftuner.pvl.APIWorker;
 import io.github.gatimus.hooftuner.pvl.NowPlaying;
 import io.github.gatimus.hooftuner.pvl.PonyvilleLive;
 import io.github.gatimus.hooftuner.pvl.Station;
-import io.github.gatimus.hooftuner.pvl.StationAdapter;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -77,6 +80,7 @@ public class Main extends Activity implements Callback<io.github.gatimus.hooftun
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
+
         //setup drawer list
         listView = (ListView) findViewById(android.R.id.list);
         listView.setEmptyView(findViewById(android.R.id.empty));
@@ -89,6 +93,23 @@ public class Main extends Activity implements Callback<io.github.gatimus.hooftun
                         .setAction(MusicService.ACTION_STOP);
                 Main.this.startService(iStop);
                 actionBar.setTitle(selectedStation.name);
+                PicassoWrapper.getStationPicasso(getApplicationContext(),selectedStation.image_url.toString())
+                        .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        actionBar.setIcon(new BitmapDrawable(getResources(),bitmap));
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+                        actionBar.setIcon(R.drawable.icon);
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        actionBar.setIcon(R.drawable.icon);
+                    }
+                });
                 if(selectedStation.category.equals(Station.AUDIO)){
 
                     Intent iStart = new Intent(Main.this, MusicService.class)

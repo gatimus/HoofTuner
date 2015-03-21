@@ -3,7 +3,9 @@
 <!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="PonyvilleLive" parent="@style/_PonyvilleLive" />
+    <style name="PonyvilleLive" parent="@style/_PonyvilleLive">
+
+    </style>
 
     <style name="_PonyvilleLive" parent="android:Theme.Holo.Light.DarkActionBar">
 

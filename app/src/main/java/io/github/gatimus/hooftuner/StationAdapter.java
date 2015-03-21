@@ -1,4 +1,4 @@
-package io.github.gatimus.hooftuner.pvl;
+package io.github.gatimus.hooftuner;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,12 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.joanzapata.android.iconify.Iconify;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import io.github.gatimus.hooftuner.BuildConfig;
-import io.github.gatimus.hooftuner.R;
+import io.github.gatimus.hooftuner.pvl.Station;
 
 public class StationAdapter extends ArrayAdapter<Station> {
 
@@ -41,14 +39,10 @@ public class StationAdapter extends ArrayAdapter<Station> {
 
         name.setText(station.name);
         genre.setText(station.genre);
-        Picasso picasso = Picasso.with(context);
-        if(BuildConfig.DEBUG) picasso.setIndicatorsEnabled(true);
-        picasso.load(station.image_url.toString())
-                .placeholder(android.R.drawable.stat_sys_download)
-                .error(android.R.drawable.ic_menu_close_clear_cancel)
+        PicassoWrapper.getStationPicasso(context, station.image_url.toString())
                 .into(stationImage);
-        if(station.category.equals(Station.AUDIO)) category.setText(Iconify.compute("{fa-headphones}"));
-        if(station.category.equals(Station.VIDEO)) category.setText(Iconify.compute("{fa-desktop}"));
+        if(station.category.equals(Station.AUDIO)) category.setText(Iconify.compute("{fa-music}"));
+        if(station.category.equals(Station.VIDEO)) category.setText(Iconify.compute("{fa-video-camera}"));
 
         return rowView;
     } //getView
