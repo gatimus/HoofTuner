@@ -43,9 +43,9 @@ public class SongFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_song, container, false);
         stationBG = (ImageView) view.findViewById(R.id.stationBG);
-        songImage = (ImageView) view.findViewById(R.id.songImage);
-        songArtist = (TextView) view.findViewById(R.id.songArtist);
-        songTitle = (TextView) view.findViewById(R.id.songTitle);
+        songImage = (ImageView) view.findViewById(R.id.song_image);
+        songArtist = (TextView) view.findViewById(R.id.song_artist);
+        songTitle = (TextView) view.findViewById(R.id.song_title);
         setBackground();
         return view;
     }

@@ -7,7 +7,7 @@ public class NowPlaying {
     public String status;
     public Station station;
     public List<Stream> streams;
-    public Song current_song;
+    public Song current_song = new Song();
     public List<SongHistory> song_history;
     public Listeners listeners;
     public Event event;

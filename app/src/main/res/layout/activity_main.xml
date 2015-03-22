@@ -6,132 +6,94 @@
     android:layout_height="match_parent"
     tools:context=".Main">
 
-    <RelativeLayout
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin">
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:stretchColumns="1">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/songInfo">
-
-            <ImageView
-                android:id="@+id/stationBG"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:scaleType="centerCrop"
-                 />
-
-            <ImageView
-                android:id="@+id/songImage"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
-
-            <TextView
-                android:id="@+id/event"
+        <TableRow>
+            <io.github.gatimus.hooftuner.PVLTextView
+                android:id="@+id/station_genre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@id/songImage" />
-
-
-            <TextView
-                android:id="@+id/songArtist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:layout_below="@id/event"
-                android:layout_toRightOf="@id/songImage" />
-
-            <TextView
-                android:id="@+id/songTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:layout_below="@id/songArtist"
-                android:layout_toRightOf="@id/songImage" />
-
-            <TextView
-                android:id="@+id/event_upcoming"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:layout_below="@id/songTitle"
-                android:layout_toRightOf="@id/songImage" />
-
+                android:layout_column="0"
+                android:layout_span="2" />
             <IconTextView
                 android:id="@+id/icon_user"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="{fa-user}"
-                android:layout_below="@id/event_upcoming"
-                android:layout_toRightOf="@id/songImage" />
+                android:layout_column="2" />
+        </TableRow>
 
-            <io.github.gatimus.hooftuner.IconToggleButton
+        <TableRow>
+            <ImageView
+                android:id="@+id/song_image"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/song_generic"
+                android:layout_column="0" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_column="1">
+                <io.github.gatimus.hooftuner.PVLTextView
+                    android:id="@+id/event"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <io.github.gatimus.hooftuner.PVLTextView
+                    android:id="@+id/song_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <io.github.gatimus.hooftuner.PVLTextView
+                    android:id="@+id/song_artist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <io.github.gatimus.hooftuner.IconToggleButton
+                    android:onClick="onPlay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textOn="{fa-pause}"
+                    android:textOff="{fa-play}"
+                    android:textColor="@color/ponyvillelive_color"
+                    android:background="@android:color/transparent" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow>
+            <LinearLayout
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_column="0">
+                <IconTextView
+                    android:id="@+id/like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="{fa-thumbs-up}"
+                    android:textColor="@color/like" />
+                <TextView
+                    android:id="@+id/score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="---" />
+                <IconTextView
+                    android:id="@+id/dislike"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="{fa-thumbs-down}"
+                    android:textColor="@color/dislike" />
+            </LinearLayout>
+            <io.github.gatimus.hooftuner.PVLTextView
+                android:id="@+id/event_upcoming"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textOn="{fa-pause}"
-                android:textOff="{fa-play}"
-                android:layout_below="@id/icon_user"
-                android:layout_toRightOf="@id/songImage"
-                android:layout_centerInParent="true"
-                android:background="@android:color/transparent" />
+                android:layout_column="1" />
+        </TableRow>
 
-            <IconTextView
-                android:id="@+id/like"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="{fa-thumbs-up}"
-                android:textColor="@color/like"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true" />
-            <TextView
-                android:id="@+id/score"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="100"
-                android:layout_below="@+id/like"
-                android:layout_alignParentRight="true" />
-            <IconTextView
-                android:id="@+id/dislike"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="{fa-thumbs-down}"
-                android:textColor="@color/dislike"
-                android:layout_below="@+id/score"
-                android:layout_alignParentRight="true" />
-
-
-        </RelativeLayout>
-
-        <!--
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@id/songInfo">
-
-            <android.support.v4.view.PagerTitleStrip
-                android:id="@+id/pager_title_strip"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"/>
-
-        </android.support.v4.view.ViewPager>
-        -->
-
-
-
-
-    </RelativeLayout>
+    </TableLayout>
 
     <LinearLayout
         android:orientation="vertical"

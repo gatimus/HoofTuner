@@ -41,26 +41,29 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        switch(intent.getAction()) {
-            case ACTION_PLAY:
-                if(player != null) {
-                    if(player.isPlaying()) break;
-                    player.start();
+        if(intent != null){
+            switch(intent.getAction()) {
+                case ACTION_PLAY:
+                    if(player != null) {
+                        if(player.isPlaying()) break;
+                        player.start();
+                        break;
+                    }
+                    if(intent.hasExtra(KEY_STREAM_URL)) {
+                        playRemoteResource(intent.getStringExtra(KEY_STREAM_URL));
+                    }
                     break;
-                }
-                if(intent.hasExtra(KEY_STREAM_URL)) {
-                    playRemoteResource(intent.getStringExtra(KEY_STREAM_URL));
-                }
-                break;
-            case ACTION_PAUSE:
-                if(player != null && player.isPlaying())
-                    player.pause();
-                break;
-            case ACTION_STOP:
-                if(player != null && player.isPlaying())
-                    stopPlayback();
-                break;
+                case ACTION_PAUSE:
+                    if(player != null && player.isPlaying())
+                        player.pause();
+                    break;
+                case ACTION_STOP:
+                    if(player != null && player.isPlaying())
+                        stopPlayback();
+                    break;
+            }
         }
+
         /*
         Notification notification = new Notification.Builder(getApplicationContext())
                 //.setCategory(Notification.CATEGORY_SERVICE)

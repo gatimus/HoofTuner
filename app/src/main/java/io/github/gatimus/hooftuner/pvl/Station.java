@@ -8,7 +8,7 @@ public class Station {
     public static final String AUDIO = "audio";
     public static final String VIDEO = "video";
 
-    public int id;
+    public int id = 0;
     public String name;
     public String shortcode;
     public String genre;

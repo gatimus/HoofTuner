@@ -12,7 +12,7 @@
         android:scaleType="centerCrop" />
 
     <ImageView
-        android:id="@+id/songImage"
+        android:id="@+id/song_image"
         android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
@@ -21,27 +21,27 @@
 
 
     <TextView
-        android:id="@+id/songArtist"
+        android:id="@+id/song_artist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/abc_text_size_headline_material"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/songImage" />
+        android:layout_toRightOf="@id/song_image" />
 
     <TextView
-        android:id="@+id/songTitle"
+        android:id="@+id/song_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/abc_text_size_headline_material"
-        android:layout_below="@id/songArtist"
-        android:layout_toRightOf="@id/songImage" />
+        android:layout_below="@id/song_artist"
+        android:layout_toRightOf="@id/song_image" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/listenersIcon"
         android:src="@android:drawable/sym_contact_card"
-        android:layout_below="@id/songTitle"
-        android:layout_toRightOf="@id/songImage"/>
+        android:layout_below="@id/song_title"
+        android:layout_toRightOf="@id/song_image"/>
 
 </RelativeLayout>

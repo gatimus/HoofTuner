@@ -19,4 +19,31 @@ public class PicassoWrapper {
                 .error(R.drawable.icon);
         return requestCreator;
     }
+
+    public static RequestCreator getSongPicasso(Context context, String url, String shortCode){
+        RequestCreator requestCreator = getPicasso(context).load(url);
+        if(shortCode.equals("ponyvillefm")){
+            requestCreator.placeholder(R.drawable.pvfm_default)
+                    .error(R.drawable.pvfm_default);
+        } else {
+            requestCreator.placeholder(R.drawable.song_generic)
+                    .error(R.drawable.song_generic);
+        }
+        return requestCreator;
+    }
+
+    public static RequestCreator getSongPicasso(Context context, String shortCode){
+        Picasso picasso = getPicasso(context);
+        RequestCreator requestCreator;
+        if(shortCode.equals("ponyvillefm")){
+            requestCreator = picasso.load(R.drawable.pvfm_default)
+                    .placeholder(R.drawable.pvfm_default)
+                    .error(R.drawable.pvfm_default);
+        } else {
+            requestCreator = picasso.load(R.drawable.song_generic)
+                    .placeholder(R.drawable.song_generic)
+                    .error(R.drawable.song_generic);
+        }
+        return requestCreator;
+    }
 }

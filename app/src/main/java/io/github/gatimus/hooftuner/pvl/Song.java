@@ -4,7 +4,7 @@ import java.net.URL;
 
 public class Song {
 
-    public String id;
+    public String id = "";
     public String text;
     public String artist;
     public String title;
