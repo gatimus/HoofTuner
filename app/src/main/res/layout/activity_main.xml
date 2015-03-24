@@ -20,10 +20,11 @@
                 android:id="@+id/station_genre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/abc_text_size_small_material"
                 android:layout_column="0"
                 android:layout_span="2" />
             <IconTextView
-                android:id="@+id/icon_user"
+                android:id="@+id/listeners"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="{fa-user}"
@@ -37,30 +38,51 @@
                 android:layout_height="150dp"
                 android:src="@drawable/song_generic"
                 android:layout_column="0" />
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_column="1">
-                <io.github.gatimus.hooftuner.PVLTextView
-                    android:id="@+id/event"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <io.github.gatimus.hooftuner.PVLTextView
-                    android:id="@+id/song_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <io.github.gatimus.hooftuner.PVLTextView
-                    android:id="@+id/song_artist"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <io.github.gatimus.hooftuner.IconToggleButton
-                    android:onClick="onPlay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOn="{fa-pause}"
-                    android:textOff="{fa-play}"
-                    android:textColor="@color/ponyvillelive_color"
-                    android:background="@android:color/transparent" />
-            </LinearLayout>
+            <RelativeLayout
+                android:layout_column="1"
+                android:layout_height="150dp"
+                android:layout_width="wrap_content">
+                <FrameLayout
+                    android:id="@+id/visContainer"
+                    android:layout_width="fill_parent"
+                    android:layout_height="150dp"/>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:paddingLeft="5dp">
+                    <io.github.gatimus.hooftuner.PVLTextView
+                        android:id="@+id/event"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/abc_text_size_medium_material"/>
+                    <io.github.gatimus.hooftuner.PVLTextView
+                        android:id="@+id/song_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/abc_text_size_large_material"/>
+                    <io.github.gatimus.hooftuner.PVLTextView
+                        android:id="@+id/song_artist"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/abc_text_size_small_material"/>
+                    <io.github.gatimus.hooftuner.IconToggleButton
+                        android:onClick="onPlay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textOn="{fa-pause}"
+                        android:textOff="{fa-play}"
+                        android:textSize="@dimen/abc_text_size_large_material"
+                        android:textColor="@color/ponyvillelive_color"
+                        android:background="@android:color/transparent" />
+                    <io.github.gatimus.hooftuner.PVLTextView
+                        android:id="@+id/event_upcoming"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/abc_text_size_small_material" />
+                </LinearLayout>
+
+            </RelativeLayout>
         </TableRow>
 
         <TableRow>
@@ -68,29 +90,33 @@
                 android:orientation="vertical"
                 android:gravity="center"
                 android:layout_column="0">
-                <IconTextView
-                    android:id="@+id/like"
+                <IconButton
+                    android:onClick="onLike"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="{fa-thumbs-up}"
-                    android:textColor="@color/like" />
+                    android:textSize="@dimen/abc_text_size_large_material"
+                    android:textColor="@color/like"
+                    android:background="@android:color/transparent" />
                 <TextView
                     android:id="@+id/score"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="---" />
-                <IconTextView
-                    android:id="@+id/dislike"
+                    android:text="---"
+                    android:textSize="@dimen/abc_text_size_large_material"/>
+                <IconButton
+                    android:onClick="onDisLike"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="{fa-thumbs-down}"
-                    android:textColor="@color/dislike" />
+                    android:textSize="@dimen/abc_text_size_large_material"
+                    android:textColor="@color/dislike"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
-            <io.github.gatimus.hooftuner.PVLTextView
-                android:id="@+id/event_upcoming"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1" />
+            <FrameLayout
+                android:id="@+id/tweetFragmentContainer"
+                android:layout_column="1"
+                android:layout_span="2"/>
         </TableRow>
 
     </TableLayout>

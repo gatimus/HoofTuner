@@ -27,7 +27,10 @@ public class PVLTextView extends TextView{
     */
 
     private void init(Context context) {
-        if (!isInEditMode()) setTypeface(Typeface.createFromAsset(context.getAssets(),"fonts/SourceSansPro-Regular.ttf"));
+        if (!isInEditMode()){
+            setTypeface(Typeface.createFromAsset(context.getAssets(),"fonts/SourceSansPro-Regular.ttf"));
+            setShadowLayer(2.5f,2.5f,2.5f,getContext().getResources().getColor(R.color.abc_primary_text_material_light));
+        }
     }
 
 }

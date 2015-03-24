@@ -2,11 +2,13 @@ package io.github.gatimus.hooftuner;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -17,10 +19,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
+import com.joanzapata.android.iconify.Iconify;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -30,7 +36,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import io.github.gatimus.hooftuner.bt.BronyTunes;
 import io.github.gatimus.hooftuner.pvl.APIWorker;
 import io.github.gatimus.hooftuner.pvl.NowPlaying;
 import io.github.gatimus.hooftuner.pvl.PonyvilleLive;
@@ -39,14 +44,13 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-
 public class Main extends Activity implements Callback<io.github.gatimus.hooftuner.pvl.Response<NowPlaying>>{
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private ActionBar actionBar;
     private ListView listView;
-    private TextView stationGenre, songArtist, songTitle, event, eventUpComing;
+    private TextView listeners, stationGenre, songArtist, songTitle, event, eventUpComing, score;
     //private TextView songDescription;
     //private TextView songLyrics;
     private ImageView songImage, stationBG;
@@ -58,7 +62,7 @@ public class Main extends Activity implements Callback<io.github.gatimus.hooftun
     private Updater updater;
     private List<Station> stations;
     private ArrayAdapter<Station> stationAdapter;
-    private TweetFragment tweetFragment;
+    private Fragment tweetFragment;
     private ViewPager viewPager;
 
     @Override
@@ -66,6 +70,11 @@ public class Main extends Activity implements Callback<io.github.gatimus.hooftun
         super.onCreate(savedInstanceState);
         stations = Global.stations;
         setContentView(R.layout.activity_main);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+        //vis
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.visContainer);
+        frameLayout.addView(new VisualizerView(getApplicationContext()));
 
 
         //setup drawer
@@ -92,6 +101,8 @@ public class Main extends Activity implements Callback<io.github.gatimus.hooftun
             }
         });
         //ui ref
+        score = (TextView) findViewById(R.id.score);
+        listeners = (TextView) findViewById(R.id.listeners);
         songArtist = (TextView) findViewById(R.id.song_artist);
         songTitle = (TextView) findViewById(R.id.song_title);
         event = (TextView) findViewById(R.id.event);
@@ -126,7 +137,7 @@ public class Main extends Activity implements Callback<io.github.gatimus.hooftun
     protected void onStart(){
         super.onStart();
         Log.v(getClass().getSimpleName(), "start");
-        scheduledUpdate = updateScheduler.scheduleWithFixedDelay(updater, 0 , 30_000, TimeUnit.MILLISECONDS);
+        scheduledUpdate = updateScheduler.scheduleWithFixedDelay(updater, 0 , 5_000, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -180,14 +191,10 @@ public class Main extends Activity implements Callback<io.github.gatimus.hooftun
 
 
     public class Updater implements Runnable {
-
         @Override
         public void run() {
-            Log.v(getClass().getSimpleName(), "update");
             if(selectedStation != null){
-                //nowPlaying = api.getNowPlaying(selectedStation.shortcode);
                 PonyvilleLive.getPonyvilleLiveInterface().nowPlaying(selectedStation.shortcode, Main.this);
-
             }
         }
     }
@@ -196,9 +203,7 @@ public class Main extends Activity implements Callback<io.github.gatimus.hooftun
     public void updateStation(Station station){
         if(selectedStation.id != station.id){
             selectedStation = station;
-            Intent iStop = new Intent(Main.this, MusicService.class)
-                    .setAction(MusicService.ACTION_STOP);
-            Main.this.startService(iStop);
+
             actionBar.setTitle(selectedStation.name);
             stationGenre.setText(selectedStation.genre);
             PicassoWrapper.getStationPicasso(getApplicationContext(),selectedStation.image_url.toString())
@@ -220,13 +225,9 @@ public class Main extends Activity implements Callback<io.github.gatimus.hooftun
                     });
             if(selectedStation.category.equals(Station.AUDIO)){
 
-                Intent iStart = new Intent(Main.this, MusicService.class)
-                        .setAction(MusicService.ACTION_PLAY)
-                        .putExtra(MusicService.KEY_STREAM_URL, selectedStation.stream_url.toString());
-                Main.this.startService(iStart);
 
-                //tweetFragment = TweetFragment.newInstance(selectedStation);
-                //getFragmentManager().beginTransaction().replace(R.id.tweetFragmentContainer, tweetFragment).commit();
+                tweetFragment = TweetFragment.newInstance(selectedStation);
+                getFragmentManager().beginTransaction().replace(R.id.tweetFragmentContainer, tweetFragment).commit();
 
             }
 
@@ -238,15 +239,18 @@ public class Main extends Activity implements Callback<io.github.gatimus.hooftun
         if(!this.nowPlaying.current_song.id.equals(nowPlaying.current_song.id)){
             this.nowPlaying = nowPlaying;
 
+            score.setText(String.valueOf(nowPlaying.current_song.score));
+            listeners.setText(String.valueOf(nowPlaying.listeners.current) + "{fa-user}");
             songArtist.setText(nowPlaying.current_song.artist);
             songTitle.setText(nowPlaying.current_song.title);
             if(nowPlaying.event != null){
-                event.setText(nowPlaying.event.toString());
+                Iconify.addIcons(event);
+                event.setText("On Air: " + nowPlaying.event.toString());
             } else {
                 event.setText("");
             }
             if(nowPlaying.event_upcoming != null){
-                eventUpComing.setText(nowPlaying.event_upcoming.toString() + " in " + String.valueOf(nowPlaying.event_upcoming.minutes_until));
+                eventUpComing.setText("Upcoming: " + nowPlaying.event_upcoming.toString());
             } else {
                 eventUpComing.setText("");
             }
@@ -255,7 +259,7 @@ public class Main extends Activity implements Callback<io.github.gatimus.hooftun
                 if(nowPlaying.current_song.external.bronytunes != null){
                     PicassoWrapper.getSongPicasso(
                             getApplicationContext(),
-                            BronyTunes.retrieveArtworkUri(nowPlaying.current_song.external.bronytunes.id, 150).toString(),
+                            nowPlaying.current_song.external.bronytunes.image_url.toString(),
                             nowPlaying.station.shortcode
                     ).into(songImage);
                 }else if (nowPlaying.current_song.external.ponyfm != null){
@@ -280,7 +284,44 @@ public class Main extends Activity implements Callback<io.github.gatimus.hooftun
     }
 
     public void onPlay(View view){
+        ToggleButton toggleButton = (ToggleButton) view;
+        Intent iStop = new Intent(Main.this, MusicService.class)
+                .setAction(MusicService.ACTION_STOP);
+        Main.this.startService(iStop);
+        if(toggleButton.isChecked()){
+            Intent iStart = new Intent(Main.this, MusicService.class)
+                    .setAction(MusicService.ACTION_PLAY)
+                    .putExtra(MusicService.KEY_STREAM_URL, selectedStation.stream_url.toString());
+            Main.this.startService(iStart);
+        }
+    }
 
+    public void onLike(View view){
+        PonyvilleLive.getPonyvilleLiveInterface().likeSong(nowPlaying.current_song.sh_id, new Callback<io.github.gatimus.hooftuner.pvl.Response<String>>() {
+            @Override
+            public void success(io.github.gatimus.hooftuner.pvl.Response<String> stringResponse, Response response) {
+                Toast.makeText(getApplicationContext(), stringResponse.result, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e(getClass().getSimpleName(), error.toString());
+            }
+        });
+    }
+
+    public void onDisLike(View view){
+        PonyvilleLive.getPonyvilleLiveInterface().dislikeSong(nowPlaying.current_song.sh_id, new Callback<io.github.gatimus.hooftuner.pvl.Response<String>>() {
+            @Override
+            public void success(io.github.gatimus.hooftuner.pvl.Response<String> stringResponse, Response response) {
+                Toast.makeText(getApplicationContext(), stringResponse.result, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e(getClass().getSimpleName(), error.toString());
+            }
+        });
     }
 
 }

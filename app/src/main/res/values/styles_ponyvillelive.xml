@@ -3,6 +3,10 @@
 <!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <style name="ListViewPonyvilleLive" parent="android:Widget.Holo.Light.ListView">
+        <item name="android:background">@color/list_bg</item>
+    </style>
+
     <style name="ActionBarPonyvilleLive" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/ponyvillelive_color</item>
     </style>

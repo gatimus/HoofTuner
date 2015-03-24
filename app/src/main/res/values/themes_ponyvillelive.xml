@@ -9,6 +9,8 @@
 
     <style name="_PonyvilleLive" parent="android:Theme.Holo.Light.DarkActionBar">
 
+        <item name="android:listViewStyle">@style/ListViewPonyvilleLive</item>
+
         <item name="android:actionBarStyle">@style/ActionBarPonyvilleLive</item>
 
         <item name="android:editTextBackground">@drawable/ponyvillelive_edit_text_holo_light</item>
