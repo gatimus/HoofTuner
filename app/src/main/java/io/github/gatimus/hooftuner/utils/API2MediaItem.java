@@ -1,10 +1,11 @@
 package io.github.gatimus.hooftuner.utils;
 
 import android.annotation.TargetApi;
-import android.media.MediaMetadata;
+import android.media.MediaDescription;
 import android.media.browse.MediaBrowser;
 import android.os.Build;
 import android.service.media.MediaBrowserService;
+import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 import io.github.gatimus.hooftuner.pvl.PonyvilleLive;
@@ -16,32 +17,30 @@ import retrofit.RetrofitError;
 public class API2MediaItem {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static void loadStations(MediaBrowserService.Result<List<MediaBrowser.MediaItem>> result){
+    public static void loadStations(final MediaBrowserService.Result<List<MediaBrowser.MediaItem>> result){
         final List<MediaBrowser.MediaItem> mediaItems = new ArrayList<MediaBrowser.MediaItem>();
         PonyvilleLive.getPonyvilleLiveInterface().listStations(new Callback<Response<List<Station>>>() {
             @Override
             public void success(Response<List<Station>> listResponse, retrofit.client.Response response) {
                 for(Station station : listResponse.result){
-                    MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                            .putString(MediaMetadata.METADATA_KEY_MEDIA_ID, station.shortcode)
-                            .putString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE, station.name)
-                            .putString(MediaMetadata.METADATA_KEY_TITLE, station.name)
-                            .putString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE, station.genre)
-                            .putString(MediaMetadata.METADATA_KEY_GENRE, station.genre)
-                            .putString(MediaMetadata.METADATA_KEY_ART_URI, station.image_url.toString())
-                            .putString(MediaMetadata.METADATA_KEY_ALBUM_ART_URI, station.image_url.toString())
-                            .putString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI, station.image_url.toString())
-                            .build();
-                    mediaItems.add(new MediaBrowser.MediaItem(mediaMetadata.getDescription(), MediaBrowser.MediaItem.FLAG_BROWSABLE));
+
+                        MediaBrowser.MediaItem mediaItem = new MediaBrowser.MediaItem(new MediaDescription.Builder()
+                                .setMediaId(station.shortcode)
+                                .setTitle(station.name)
+                                .setSubtitle(station.genre)
+                                //.setIconUri(station.image_url)
+                                .build(), MediaBrowser.MediaItem.FLAG_BROWSABLE);
+                    mediaItems.add(mediaItem);
                 }
+                result.sendResult(mediaItems);
             }
 
             @Override
             public void failure(RetrofitError error) {
-
+                Log.e(getClass().getSimpleName(), error.toString());
             }
         });
-        result.sendResult(mediaItems);
+
     }
 
     public static void loadStreams(String parentId, MediaBrowserService.Result<List<MediaBrowser.MediaItem>> result){

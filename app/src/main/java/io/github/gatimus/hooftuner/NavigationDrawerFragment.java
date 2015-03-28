@@ -1,7 +1,11 @@
 package io.github.gatimus.hooftuner;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ListFragment;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,7 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
 import io.github.gatimus.hooftuner.pvl.Station;
+import io.github.gatimus.hooftuner.utils.PicassoWrapper;
 
 public class NavigationDrawerFragment extends ListFragment {
 
@@ -51,7 +59,27 @@ public class NavigationDrawerFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        callbackActivity.onNavigationDrawerItemSelected(Global.stations.get(position));
+        Station selectedStation = Global.stations.get(position);
+        final ActionBar actionBar = getActivity().getActionBar();
+        actionBar.setTitle(selectedStation.name);
+        PicassoWrapper.getStationPicasso(getActivity(), selectedStation.image_url.toString())
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        actionBar.setIcon(new BitmapDrawable(getResources(), bitmap));
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+                        actionBar.setIcon(R.drawable.icon);
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        actionBar.setIcon(R.drawable.icon);
+                    }
+                });
+        callbackActivity.onNavigationDrawerItemSelected(selectedStation);
     }
 
     public static interface NavigationDrawerCallbacks {

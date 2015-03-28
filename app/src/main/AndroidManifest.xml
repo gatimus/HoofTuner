@@ -13,6 +13,14 @@
         android:label="@string/app_name"
         android:theme="@style/PonyvilleLive" >
 
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc"/>
+
+        <meta-data
+            android:name="com.google.android.gms.car.notification.SmallIcon"
+            android:resource="@drawable/icon" />
+
         <activity
             android:name=".Main" >
             <intent-filter>
@@ -33,6 +41,14 @@
         <service
             android:name=".MusicService"
             android:exported="false" >
+        </service>
+
+        <service
+            android:name=".PVLMediaBrowserService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService"/>
+            </intent-filter>
         </service>
 
     </application>

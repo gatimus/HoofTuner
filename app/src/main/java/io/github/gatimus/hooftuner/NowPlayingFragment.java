@@ -85,7 +85,7 @@ public class NowPlayingFragment extends Fragment implements Callback<Response<No
 
     private void initUI(View view){
         score = (TextView) view.findViewById(R.id.score);
-        //listeners = (TextView) view.findViewById(R.id.listeners);
+        listeners = (TextView) view.findViewById(R.id.listeners);
         songArtist = (TextView) view.findViewById(R.id.song_artist);
         songTitle = (TextView) view.findViewById(R.id.song_title);
         event = (TextView) view.findViewById(R.id.event);
@@ -95,14 +95,16 @@ public class NowPlayingFragment extends Fragment implements Callback<Response<No
         play.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Intent iStop = new Intent(getActivity(), MusicService.class)
+                if(nowPlaying.station != null){
+                    Intent iStop = new Intent(getActivity(), MusicService.class)
                         .setAction(MusicService.ACTION_STOP);
-                getActivity().startService(iStop);
-                if(isChecked){
-                    Intent iStart = new Intent(getActivity(), MusicService.class)
-                            .setAction(MusicService.ACTION_PLAY)
-                            .putExtra(MusicService.KEY_STREAM_URL, nowPlaying.station.stream_url.toString());
-                    getActivity().startService(iStart);
+                    getActivity().startService(iStop);
+                    if(isChecked){
+                        Intent iStart = new Intent(getActivity(), MusicService.class)
+                                .setAction(MusicService.ACTION_PLAY)
+                                .putExtra(MusicService.KEY_STREAM_URL, nowPlaying.station.stream_url.toString());
+                        getActivity().startService(iStart);
+                    }
                 }
             }
         });
@@ -142,7 +144,7 @@ public class NowPlayingFragment extends Fragment implements Callback<Response<No
         if(!this.nowPlaying.current_song.id.equals(nowPlaying.current_song.id)){
             this.nowPlaying = nowPlaying;
             score.setText(String.valueOf(nowPlaying.current_song.score));
-            //listeners.setText(String.valueOf(nowPlaying.listeners.current) + "{fa-user}");
+            listeners.setText(String.valueOf(nowPlaying.listeners.current) + "{fa-user}");
             songArtist.setText(nowPlaying.current_song.artist);
             songTitle.setText(nowPlaying.current_song.title);
             if(nowPlaying.event != null){

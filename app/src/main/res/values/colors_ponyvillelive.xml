@@ -3,6 +3,6 @@
     <color name="ponyvillelive_color">#2c7fd2</color>
     <color name="like">#9FB79D</color>
     <color name="dislike">#B79D9D</color>
-    <color name="list_bg">#F213385d</color>
-    <!--19,56,93,0.95-->
+    <color name="list_bg">#E213385d</color>
+    <!--#F213385d-->
 </resources>

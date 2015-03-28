@@ -3,27 +3,18 @@ package io.github.gatimus.hooftuner;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import io.github.gatimus.hooftuner.pvl.Station;
-import io.github.gatimus.hooftuner.utils.PicassoWrapper;
 
 public class Main extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks{
 
     private Station selectedStation = new Station();
-    private TextView stationGenre;
 
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private ActionBar actionBar;
@@ -47,8 +38,6 @@ public class Main extends Activity implements NavigationDrawerFragment.Navigatio
                 R.string.navigation_drawer_close
         );
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
-
-        stationGenre = (TextView) findViewById(R.id.station_genre);
     }
 
     @Override
@@ -87,25 +76,7 @@ public class Main extends Activity implements NavigationDrawerFragment.Navigatio
     public void updateStation(Station station){
         if(selectedStation.id != station.id){
             selectedStation = station;
-            getActionBar().setTitle(selectedStation.name);
-            stationGenre.setText(selectedStation.genre);
-            PicassoWrapper.getStationPicasso(getApplicationContext(), selectedStation.image_url.toString())
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            getActionBar().setIcon(new BitmapDrawable(getResources(), bitmap));
-                        }
 
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-                            getActionBar().setIcon(R.drawable.icon);
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            getActionBar().setIcon(R.drawable.icon);
-                        }
-                    });
             if(selectedStation.category.equals(Station.AUDIO)){
                 TweetFragment tweetFragment = TweetFragment.newInstance(selectedStation);
                 getFragmentManager().beginTransaction().replace(R.id.tweet_fragment_container, tweetFragment).commit();

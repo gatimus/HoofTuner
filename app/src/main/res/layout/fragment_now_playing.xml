@@ -1,98 +1,109 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--TODO TableLayout?-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     tools:context="io.github.gatimus.hooftuner.NowPlayingFragment">
 
-
-
-
-    <ImageView
-        android:id="@+id/song_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:src="@drawable/song_generic" />
-
-    <FrameLayout
-        android:layout_toRightOf="@+id/song_image"
-        android:id="@+id/vis_container"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent" />
-
-    <LinearLayout
-        android:layout_toRightOf="@+id/song_image"
+    <io.github.gatimus.hooftuner.customviews.PVLTextView
+        android:id="@+id/event"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingLeft="5dp">
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/abc_text_size_small_material" />
 
-        <io.github.gatimus.hooftuner.customviews.PVLTextView
-            android:id="@+id/event"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+
+        <ImageView
+            android:id="@+id/song_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/song_generic" />
+
+        <FrameLayout
+            android:id="@+id/vis_container"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/song_image" />
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/abc_text_size_small_material" />
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/song_image"
+            android:orientation="vertical">
 
-        <io.github.gatimus.hooftuner.customviews.PVLTextView
-            android:id="@+id/song_title"
+
+            <io.github.gatimus.hooftuner.customviews.PVLTextView
+                android:id="@+id/song_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/abc_text_size_large_material" />
+
+            <io.github.gatimus.hooftuner.customviews.PVLTextView
+                android:id="@+id/song_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/abc_text_size_small_material" />
+
+            <io.github.gatimus.hooftuner.customviews.IconToggleButton
+                android:id="@+id/play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:textColor="@color/ponyvillelive_color"
+                android:textOff="{fa-play}"
+                android:textOn="{fa-pause}"
+                android:textSize="@dimen/abc_text_size_large_material" />
+
+            <io.github.gatimus.hooftuner.customviews.PVLTextView
+                android:id="@+id/event_upcoming"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/abc_text_size_small_material" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/abc_text_size_large_material" />
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <io.github.gatimus.hooftuner.customviews.PVLTextView
-            android:id="@+id/song_artist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/abc_text_size_small_material" />
+            <IconTextView
+                android:id="@+id/listeners"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="{fa-user}"
+                android:textSize="@dimen/abc_text_size_small_material" />
 
-        <io.github.gatimus.hooftuner.customviews.IconToggleButton
-            android:id="@+id/play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:textColor="@color/ponyvillelive_color"
-            android:textOff="{fa-play}"
-            android:textOn="{fa-pause}"
-            android:textSize="@dimen/abc_text_size_large_material" />
+            <IconButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:onClick="onLike"
+                android:text="{fa-thumbs-up}"
+                android:textColor="@color/like"
+                android:textSize="@dimen/abc_text_size_large_material" />
 
-        <io.github.gatimus.hooftuner.customviews.PVLTextView
-            android:id="@+id/event_upcoming"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/abc_text_size_small_material" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="---"
+                android:textSize="@dimen/abc_text_size_large_material" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:gravity="center"
-        android:orientation="vertical">
+            <IconButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:onClick="onDisLike"
+                android:text="{fa-thumbs-down}"
+                android:textColor="@color/dislike"
+                android:textSize="@dimen/abc_text_size_large_material" />
+        </LinearLayout>
 
-        <IconButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:onClick="onLike"
-            android:text="{fa-thumbs-up}"
-            android:textColor="@color/like"
-            android:textSize="@dimen/abc_text_size_large_material" />
+    </RelativeLayout>
 
-        <TextView
-            android:id="@+id/score"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="---"
-            android:textSize="@dimen/abc_text_size_large_material" />
-
-        <IconButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:onClick="onDisLike"
-            android:text="{fa-thumbs-down}"
-            android:textColor="@color/dislike"
-            android:textSize="@dimen/abc_text_size_large_material" />
-    </LinearLayout>
-
-
-</RelativeLayout>
+</LinearLayout>
