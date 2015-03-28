@@ -1,4 +1,4 @@
-package io.github.gatimus.hooftuner;
+package io.github.gatimus.hooftuner.customviews;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -8,6 +8,8 @@ import android.graphics.Rect;
 import android.media.audiofx.Visualizer;
 import android.util.Log;
 import android.view.View;
+
+import io.github.gatimus.hooftuner.R;
 
 public class VisualizerView extends View implements Visualizer.OnDataCaptureListener {
 

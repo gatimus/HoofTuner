@@ -14,6 +14,7 @@ import com.joanzapata.android.iconify.Iconify;
 import java.util.List;
 
 import io.github.gatimus.hooftuner.pvl.Station;
+import io.github.gatimus.hooftuner.utils.PicassoWrapper;
 
 public class StationAdapter extends ArrayAdapter<Station> {
 

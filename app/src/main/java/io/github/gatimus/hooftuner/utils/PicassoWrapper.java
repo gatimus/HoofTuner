@@ -1,9 +1,12 @@
-package io.github.gatimus.hooftuner;
+package io.github.gatimus.hooftuner.utils;
 
 import android.content.Context;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
+
+import io.github.gatimus.hooftuner.BuildConfig;
+import io.github.gatimus.hooftuner.R;
 
 public class PicassoWrapper {
 

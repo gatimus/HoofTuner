@@ -1,9 +1,11 @@
-package io.github.gatimus.hooftuner;
+package io.github.gatimus.hooftuner.customviews;
 
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
+import io.github.gatimus.hooftuner.R;
 
 public class PVLTextView extends TextView{
     public PVLTextView(Context context) {

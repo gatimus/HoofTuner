@@ -1,4 +1,4 @@
-package io.github.gatimus.hooftuner;
+package io.github.gatimus.hooftuner.customviews;
 
 import android.content.Context;
 import android.util.AttributeSet;

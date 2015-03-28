@@ -7,6 +7,7 @@ import android.util.Log;
 
 import java.util.List;
 
+import io.github.gatimus.hooftuner.customviews.PVLTextView;
 import io.github.gatimus.hooftuner.pvl.PonyvilleLive;
 import io.github.gatimus.hooftuner.pvl.Response;
 import io.github.gatimus.hooftuner.pvl.Station;
