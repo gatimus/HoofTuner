@@ -4,7 +4,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="PonyvilleLive" parent="@style/_PonyvilleLive">
-
+        <item name="android:colorPrimaryDark">@color/list_bg</item>
+        <item name="android:colorAccent">@color/ponyvillelive_color</item>
     </style>
 
     <style name="_PonyvilleLive" parent="android:Theme.Holo.Light.DarkActionBar">

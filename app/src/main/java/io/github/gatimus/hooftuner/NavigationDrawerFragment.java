@@ -30,7 +30,7 @@ public class NavigationDrawerFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StationAdapter stationAdapter = new StationAdapter(getActivity().getApplicationContext(), Global.stations);
+        StationAdapter stationAdapter = new StationAdapter(getActivity().getApplicationContext(), Cache.stations);
         stationAdapter.setNotifyOnChange(true);
         setListAdapter(stationAdapter);
     }
@@ -59,10 +59,10 @@ public class NavigationDrawerFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        Station selectedStation = Global.stations.get(position);
+        Station selectedStation = Cache.stations.get(position);
         final ActionBar actionBar = getActivity().getActionBar();
         actionBar.setTitle(selectedStation.name);
-        PicassoWrapper.getStationPicasso(getActivity(), selectedStation.image_url.toString())
+        PicassoWrapper.getStationPicasso(getActivity(), selectedStation.imageUri.toString())
                 .into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {

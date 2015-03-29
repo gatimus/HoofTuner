@@ -5,12 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import java.util.List;
-
 import io.github.gatimus.hooftuner.customviews.PVLTextView;
 import io.github.gatimus.hooftuner.pvl.PonyvilleLive;
 import io.github.gatimus.hooftuner.pvl.Response;
-import io.github.gatimus.hooftuner.pvl.Station;
+import io.github.gatimus.hooftuner.pvl.StationList;
 import io.github.gatimus.hooftuner.pvl.Status;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -36,11 +34,11 @@ public class Splash extends Activity implements Callback<Response<Status>>{
     public void success(Response<Status> statusResponse, retrofit.client.Response response) {
         progressText.setText(statusResponse.result.timestamp.toString());
         if(statusResponse.result.online){
-            ponyvilleLiveInterface.listStations( new Callback<Response<List<Station>>>() {
+            ponyvilleLiveInterface.listStations( new Callback<Response<StationList>>() {
 
                 @Override
-                public void success(Response<List<Station>> stationResponse, retrofit.client.Response response) {
-                    Global.stations = stationResponse.result;
+                public void success(Response<StationList> stationResponse, retrofit.client.Response response) {
+                    Cache.stations = stationResponse.result;
                     progressText.setText("Done");
                     startActivity(intent);
                 }

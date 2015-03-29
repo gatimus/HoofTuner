@@ -2,23 +2,26 @@ package io.github.gatimus.hooftuner;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
+import android.content.ComponentName;
+import android.media.MediaMetadata;
+import android.media.browse.MediaBrowser;
+import android.media.session.MediaController;
+import android.media.session.PlaybackState;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.joanzapata.android.iconify.Iconify;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import io.github.gatimus.hooftuner.customviews.VisualizerView;
 import io.github.gatimus.hooftuner.pvl.NowPlaying;
@@ -42,6 +45,9 @@ public class NowPlayingFragment extends Fragment implements Callback<Response<No
     private ScheduledFuture scheduledUpdate;
     private Updater updater;
 
+    private MediaBrowser mMediaBrowser;
+    private MediaController.TransportControls transportControls;
+
     private String stationShortcode;
 
     public static NowPlayingFragment newInstance(Station station) {
@@ -63,6 +69,54 @@ public class NowPlayingFragment extends Fragment implements Callback<Response<No
 
     }
 
+    private MediaBrowser.ConnectionCallback mConnectionCallback = new MediaBrowser.ConnectionCallback() {
+        @Override
+        public void onConnected() {
+            Log.i(getClass().getSimpleName(), "Connected");
+            MediaController mMediaController = new MediaController(getActivity(), mMediaBrowser.getSessionToken());
+            transportControls = mMediaController.getTransportControls();
+            transportControls.playFromMediaId(String.valueOf(Cache.stations.get(stationShortcode).default_stream_id), null);
+            mMediaController.registerCallback(mSessionCallback);
+            mMediaBrowser.subscribe(String.valueOf(Cache.stations.get(stationShortcode).default_stream_id), new MediaBrowser.SubscriptionCallback(){});
+        }
+
+        @Override
+        public void onConnectionSuspended() {
+            Log.e(getClass().getSimpleName(), "ConnectionSuspended");
+            super.onConnectionSuspended();
+        }
+
+        @Override
+        public void onConnectionFailed() {
+            Log.e(getClass().getSimpleName(), "ConnectionFailed");
+            super.onConnectionFailed();
+        }
+    };
+
+    private MediaController.Callback mSessionCallback = new MediaController.Callback() {
+        @Override
+        public void onPlaybackStateChanged(PlaybackState state) {
+            if(state.getState() == PlaybackState.STATE_PLAYING){
+                play.setEnabled(true);
+                play.setChecked(true);
+            }
+            if(state.getState() == PlaybackState.STATE_BUFFERING){
+                play.setEnabled(false);
+            }
+            if(state.getState() == PlaybackState.STATE_PAUSED || state.getState() == PlaybackState.STATE_STOPPED){
+                play.setEnabled(true);
+                play.setChecked(false);
+            }
+        }
+
+        @Override
+        public void onMetadataChanged(MediaMetadata metadata) {
+            Log.v(getClass().getSimpleName(), metadata.toString());
+            songArtist.setText(metadata.getString(MediaMetadata.METADATA_KEY_ARTIST));
+            songTitle.setText(metadata.getString(MediaMetadata.METADATA_KEY_TITLE));
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +126,25 @@ public class NowPlayingFragment extends Fragment implements Callback<Response<No
         //threading
         updateScheduler = Executors.newScheduledThreadPool(1);
         updater = new Updater();
-        scheduledUpdate = updateScheduler.scheduleWithFixedDelay(updater, 0 , 5_000, TimeUnit.MILLISECONDS);
+        //scheduledUpdate = updateScheduler.scheduleWithFixedDelay(updater, 0 , 5_000, TimeUnit.MILLISECONDS);
+
+        mMediaBrowser = new MediaBrowser(
+                getActivity(),
+                new ComponentName(getActivity(), PVLMediaBrowserService.class),
+                mConnectionCallback, null);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mMediaBrowser.connect();
+    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mMediaBrowser.disconnect();
     }
 
     @Override
@@ -92,6 +164,7 @@ public class NowPlayingFragment extends Fragment implements Callback<Response<No
         eventUpComing = (TextView) view.findViewById(R.id.event_upcoming);
         songImage = (ImageView) view.findViewById(R.id.song_image);
         play = (ToggleButton) view.findViewById(R.id.play);
+        /*
         play.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -108,6 +181,7 @@ public class NowPlayingFragment extends Fragment implements Callback<Response<No
                 }
             }
         });
+        */
 
         //vis
         FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.vis_container);

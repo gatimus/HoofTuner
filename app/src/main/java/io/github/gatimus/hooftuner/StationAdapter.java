@@ -40,7 +40,7 @@ public class StationAdapter extends ArrayAdapter<Station> {
 
         name.setText(station.name);
         genre.setText(station.genre);
-        PicassoWrapper.getStationPicasso(context, station.image_url.toString())
+        PicassoWrapper.getStationPicasso(context, station.imageUri.toString())
                 .into(stationImage);
         if(station.category.equals(Station.AUDIO)) category.setText(Iconify.compute("{fa-music}"));
         if(station.category.equals(Station.VIDEO)) category.setText(Iconify.compute("{fa-video-camera}"));

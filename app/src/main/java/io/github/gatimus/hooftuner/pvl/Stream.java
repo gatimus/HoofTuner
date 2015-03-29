@@ -1,13 +1,17 @@
 package io.github.gatimus.hooftuner.pvl;
 
-import java.net.URL;
+import android.net.Uri;
+
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class Stream {
 
     public int id;
     public String name;
-    public URL url;
+    @SerializedName("url")
+    public Uri uri;
     public String type;
     public boolean is_default;
     public String status;

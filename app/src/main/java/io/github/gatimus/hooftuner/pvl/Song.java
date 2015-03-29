@@ -1,5 +1,9 @@
 package io.github.gatimus.hooftuner.pvl;
 
+import android.net.Uri;
+
+import com.google.gson.annotations.SerializedName;
+
 import java.net.URL;
 
 public class Song {
@@ -8,6 +12,8 @@ public class Song {
     public String text;
     public String artist;
     public String title;
+    @SerializedName("image_url")
+    public Uri imageUri;
     public int sh_id;
     public int score;
     public int created_at;

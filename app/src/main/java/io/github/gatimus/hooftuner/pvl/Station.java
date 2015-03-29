@@ -1,5 +1,9 @@
 package io.github.gatimus.hooftuner.pvl;
 
+import android.net.Uri;
+
+import com.google.gson.annotations.SerializedName;
+
 import java.net.URL;
 import java.util.List;
 
@@ -13,8 +17,10 @@ public class Station {
     public String shortcode;
     public String genre;
     public String category;
+    public String affiliation;
     public String type;  //?
-    public URL image_url;
+    @SerializedName("image_url")
+    public Uri imageUri;
     public URL web_url;
     public URL stream_url;
     public URL twitter_url;
