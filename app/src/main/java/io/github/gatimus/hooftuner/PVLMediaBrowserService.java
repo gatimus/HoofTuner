@@ -1,6 +1,7 @@
 package io.github.gatimus.hooftuner;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaMetadata;
 import android.media.MediaPlayer;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.service.media.MediaBrowserService;
 import android.util.Log;
+import android.view.KeyEvent;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,8 +26,6 @@ import io.github.gatimus.hooftuner.utils.API2Media;
 public class PVLMediaBrowserService extends MediaBrowserService implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, AudioManager.OnAudioFocusChangeListener{
 
     public static final String MEDIA_ID_ROOT = "__ROOT__";
-    public static final String ANDROID_AUTO_PACKAGE_NAME = "com.google.android.projection.gearhead";
-    public static final String ANDROID_AUTO_SIMULATOR_PACKAGE_NAME = "com.google.android.mediasimulator";
 
     private MediaSession mSession;
     private MediaPlayer player;
@@ -35,6 +35,7 @@ public class PVLMediaBrowserService extends MediaBrowserService implements Media
     public void onCreate() {
         super.onCreate();
         mSession = new MediaSession(this, getClass().getSimpleName());
+        mSession.setFlags(MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
         setSessionToken(mSession.getSessionToken());
         mSession.setCallback(new MediaSessionCallback());
     }
@@ -47,15 +48,7 @@ public class PVLMediaBrowserService extends MediaBrowserService implements Media
 
     @Override
     public BrowserRoot onGetRoot(String clientPackageName, int clientUid, Bundle rootHints) {
-        if(getPackageName().equals(clientPackageName)){
-            Log.i(getClass().getSimpleName(), "Native app");
-            //if native app
-        }
-        if (ANDROID_AUTO_PACKAGE_NAME.equals(clientPackageName)) {
-            Log.i(getClass().getSimpleName(), "Android Auto");
-            // Auto
-        }
-        return new BrowserRoot(MEDIA_ID_ROOT, null);
+        return new BrowserRoot(MEDIA_ID_ROOT, rootHints);
     }
 
     @Override
@@ -102,7 +95,7 @@ public class PVLMediaBrowserService extends MediaBrowserService implements Media
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
-        mSession.setPlaybackState(new PlaybackState.Builder().setState(PlaybackState.STATE_PLAYING, 0, 0, 0).build());
+        mSession.setPlaybackState(new PlaybackState.Builder().setState(PlaybackState.STATE_PLAYING, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 1).build());
     }
 
     private void constructPlayer() {
@@ -132,7 +125,7 @@ public class PVLMediaBrowserService extends MediaBrowserService implements Media
                 wifiLock.release();
                 wifiLock = null;
             }
-        mSession.setPlaybackState(new PlaybackState.Builder().setState(PlaybackState.STATE_STOPPED, 0, 0, 0).build());
+        mSession.setPlaybackState(new PlaybackState.Builder().setState(PlaybackState.STATE_STOPPED, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 0).build());
     }
 
 
@@ -152,11 +145,40 @@ public class PVLMediaBrowserService extends MediaBrowserService implements Media
 
     private final class MediaSessionCallback extends MediaSession.Callback implements API2Media.CallBack{
         @Override
+        public boolean onMediaButtonEvent(Intent mediaButtonIntent) {
+            boolean handled = false;
+            if (Intent.ACTION_MEDIA_BUTTON.equals(mediaButtonIntent.getAction())) {
+                handled = true;
+                KeyEvent event = (KeyEvent)mediaButtonIntent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+                switch (event.getKeyCode()){
+                    case KeyEvent.KEYCODE_MEDIA_PAUSE :
+                        mSession.getController().getTransportControls().play();
+                        break;
+                    case  KeyEvent.KEYCODE_MEDIA_PLAY :
+                        mSession.getController().getTransportControls().play();
+                        break;
+                    case  KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE :
+                        if(mSession.getController().getPlaybackState().getState() == PlaybackState.STATE_PLAYING){
+                            mSession.getController().getTransportControls().pause();
+                        }else {
+                            mSession.getController().getTransportControls().play();
+                        }
+                        break;
+                    case KeyEvent.KEYCODE_MEDIA_STOP :
+                        mSession.getController().getTransportControls().stop();
+                        break;
+                    default : handled = false;
+                }
+            }
+            return handled;
+        }
+
+        @Override
         public void onPlay() {
             if(player != null){
                 if(!player.isPlaying()){
                     player.start();
-                    mSession.setPlaybackState(new PlaybackState.Builder().setState(PlaybackState.STATE_BUFFERING,0,0,0).build());
+                    mSession.setPlaybackState(new PlaybackState.Builder().setState(PlaybackState.STATE_BUFFERING,PlaybackState.PLAYBACK_POSITION_UNKNOWN, 0).build());
                 }
             }
         }
@@ -166,7 +188,7 @@ public class PVLMediaBrowserService extends MediaBrowserService implements Media
             if(player != null){
                 if(player.isPlaying()){
                     player.pause();
-                    mSession.setPlaybackState(new PlaybackState.Builder().setState(PlaybackState.STATE_PAUSED, 0, 0, 0).build());
+                    mSession.setPlaybackState(new PlaybackState.Builder().setState(PlaybackState.STATE_PAUSED, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 0).build());
                 }
             }
         }
@@ -184,7 +206,7 @@ public class PVLMediaBrowserService extends MediaBrowserService implements Media
                 onStop();
             }
             API2Media.startNowPlayingStream(Integer.parseInt(mediaId), this);
-            mSession.setPlaybackState(new PlaybackState.Builder().setState(PlaybackState.STATE_BUFFERING,0,0,0).build());
+            mSession.setPlaybackState(new PlaybackState.Builder().setState(PlaybackState.STATE_BUFFERING,PlaybackState.PLAYBACK_POSITION_UNKNOWN, 0).build());
         }
 
         @Override

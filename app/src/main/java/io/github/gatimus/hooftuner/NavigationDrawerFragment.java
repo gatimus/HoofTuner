@@ -3,9 +3,11 @@ package io.github.gatimus.hooftuner;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ListFragment;
+import android.content.ComponentName;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.browse.MediaBrowser;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,12 +18,30 @@ import android.widget.ListView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.util.List;
+
 import io.github.gatimus.hooftuner.pvl.Station;
 import io.github.gatimus.hooftuner.utils.PicassoWrapper;
 
 public class NavigationDrawerFragment extends ListFragment {
 
     private NavigationDrawerCallbacks callbackActivity;
+    private MediaBrowser mediaBrowser;
+
+    private MediaBrowser.ConnectionCallback connectionCallback = new MediaBrowser.ConnectionCallback(){
+        @Override
+        public void onConnected() {
+            mediaBrowser.subscribe(PVLMediaBrowserService.MEDIA_ID_ROOT, new MediaBrowser.SubscriptionCallback() {
+                @Override
+                public void onChildrenLoaded(String parentId, List<MediaBrowser.MediaItem> children) {
+                    //StationAdapter stationAdapter = new StationAdapter(getActivity().getApplicationContext(), Cache.stations);
+                    MediaItemAdapter stationAdapter = new MediaItemAdapter(getActivity(), children);
+                    stationAdapter.setNotifyOnChange(true);
+                    setListAdapter(stationAdapter);
+                }
+            });
+        }
+    };
 
     public NavigationDrawerFragment() {
         //empty constructor
@@ -30,9 +50,11 @@ public class NavigationDrawerFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StationAdapter stationAdapter = new StationAdapter(getActivity().getApplicationContext(), Cache.stations);
-        stationAdapter.setNotifyOnChange(true);
-        setListAdapter(stationAdapter);
+        mediaBrowser = new MediaBrowser(getActivity(),
+                new ComponentName(getActivity(), PVLMediaBrowserService.class),
+                connectionCallback, null);
+        mediaBrowser.connect();
+
     }
 
     @Override
