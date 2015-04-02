@@ -9,6 +9,7 @@ import android.media.Rating;
 import android.media.browse.MediaBrowser;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -19,9 +20,17 @@ import android.view.KeyEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import io.github.gatimus.hooftuner.pvl.PonyvilleLive;
+import io.github.gatimus.hooftuner.pvl.Response;
+import io.github.gatimus.hooftuner.pvl.Station;
+import io.github.gatimus.hooftuner.pvl.StationList;
+import io.github.gatimus.hooftuner.pvl.Stream;
 import io.github.gatimus.hooftuner.utils.API2Media;
+import retrofit.Callback;
+import retrofit.RetrofitError;
 
 public class PVLMediaBrowserService extends MediaBrowserService implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, AudioManager.OnAudioFocusChangeListener{
 
@@ -48,17 +57,37 @@ public class PVLMediaBrowserService extends MediaBrowserService implements Media
 
     @Override
     public BrowserRoot onGetRoot(String clientPackageName, int clientUid, Bundle rootHints) {
+        PonyvilleLive.getPonyvilleLiveInterface().listStations(Station.AUDIO, new Callback<Response<StationList>>() {
+            @Override
+            public void success(Response<StationList> stationListResponse, retrofit.client.Response response) {
+                Cache.stations = stationListResponse.result;
+                notifyChildrenChanged(MEDIA_ID_ROOT);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
         return new BrowserRoot(MEDIA_ID_ROOT, rootHints);
     }
 
     @Override
     public void onLoadChildren(String parentId, Result<List<MediaBrowser.MediaItem>> result) {
+        List<MediaBrowser.MediaItem> mediaItems = new ArrayList<MediaBrowser.MediaItem>();
         // Check if this is the root menu:
         if (MEDIA_ID_ROOT.equals(parentId)) {
-            API2Media.loadStations(result);
+            //API2Media.loadStations(result);
+            for(Station station : Cache.stations){
+                mediaItems.add(station.toMediaItem());
+            }
         } else if(!StringUtils.isNumeric(parentId)) {
-            API2Media.loadStreams(parentId, result, getApplicationContext());
+            //API2Media.loadStreams(parentId, result, getApplicationContext());
+            for(Stream stream : Cache.stations.get(parentId).streams){
+                mediaItems.add(stream.toMediaItem(getApplicationContext()));
+            }
         }
+        result.sendResult(mediaItems);
     }
 
     @Override
@@ -134,6 +163,19 @@ public class PVLMediaBrowserService extends MediaBrowserService implements Media
         requestAudioFocus();
         try {
             player.setDataSource(url);
+        } catch (IllegalStateException | IOException e) {
+            Log.e(getClass().getSimpleName(), e.toString());
+        }
+        player.prepareAsync();
+        wifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
+                .createWifiLock(WifiManager.WIFI_MODE_FULL, getClass().getSimpleName());
+    }
+
+    private void playRemoteResource(Uri url) {
+        constructPlayer();
+        requestAudioFocus();
+        try {
+            player.setDataSource(getApplicationContext(), url);
         } catch (IllegalStateException | IOException e) {
             Log.e(getClass().getSimpleName(), e.toString());
         }
@@ -220,10 +262,10 @@ public class PVLMediaBrowserService extends MediaBrowserService implements Media
         }
 
         @Override
-        public void onNowPlaying(MediaMetadata nowPlaying) {
+        public void onNowPlaying(MediaBrowser.MediaItem stream, MediaMetadata nowPlaying) {
             mSession.setMetadata(nowPlaying);
             if(player == null){
-                playRemoteResource(nowPlaying.getString(API2Media.METADATA_KEY_STREAM_URI));
+                playRemoteResource((Uri)stream.getDescription().getExtras().getParcelable(Stream.KEY_STREAM_URI));
             }
         }
 

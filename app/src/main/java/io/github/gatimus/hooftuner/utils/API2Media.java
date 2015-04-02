@@ -1,15 +1,10 @@
 package io.github.gatimus.hooftuner.utils;
 
 import android.content.Context;
-import android.media.MediaDescription;
 import android.media.MediaMetadata;
-import android.media.Rating;
 import android.media.browse.MediaBrowser;
-import android.os.Bundle;
 import android.service.media.MediaBrowserService;
 import android.util.Log;
-
-import com.joanzapata.android.iconify.Iconify;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,13 +41,7 @@ public class API2Media {
                 public void success(Response<StationList> listResponse, retrofit.client.Response response) {
                     Cache.stations = listResponse.result;
                     for(Station station : listResponse.result){
-                        MediaBrowser.MediaItem mediaItem = new MediaBrowser.MediaItem(new MediaDescription.Builder()
-                                .setMediaId(station.shortcode)
-                                .setTitle(station.name)
-                                .setSubtitle(station.genre)
-                                .setIconUri(station.imageUri)
-                                .build(), MediaBrowser.MediaItem.FLAG_BROWSABLE);
-                        mediaItems.add(mediaItem);
+                        mediaItems.add(station.toMediaItem());
                     }
                     result.sendResult(mediaItems);
                 }
@@ -65,13 +54,7 @@ public class API2Media {
             result.detach();
         } else {
             for(Station station : Cache.stations){
-                MediaBrowser.MediaItem mediaItem = new MediaBrowser.MediaItem(new MediaDescription.Builder()
-                        .setMediaId(station.shortcode)
-                        .setTitle(station.name)
-                        .setSubtitle(station.genre)
-                        .setIconUri(station.imageUri)
-                        .build(), MediaBrowser.MediaItem.FLAG_BROWSABLE);
-                mediaItems.add(mediaItem);
+                mediaItems.add(station.toMediaItem());
             }
             result.sendResult(mediaItems);
         }
@@ -80,21 +63,9 @@ public class API2Media {
 
     public static void loadStreams(final String parentId, final MediaBrowserService.Result<List<MediaBrowser.MediaItem>> result, Context context){
         final List<MediaBrowser.MediaItem> mediaItems = new ArrayList<MediaBrowser.MediaItem>();
-        final Bundle bundle = new Bundle();
-        bundle.putString(METADATA_KEY_SHORTCODE, Cache.stations.get(parentId).shortcode);
         if(Cache.stations != null){
             for(Stream stream : Cache.stations.get(parentId).streams){
-                Iconify.IconValue iconValue = Iconify.IconValue.fa_code_fork;
-                if (stream.is_default){
-                    iconValue = Iconify.IconValue.fa_star;
-                }
-                MediaBrowser.MediaItem mediaItem = new MediaBrowser.MediaItem(new MediaDescription.Builder()
-                        .setMediaId(String.valueOf(stream.id))
-                        .setTitle(stream.name)
-                        .setIconBitmap(IconBitmap.getIconBitmap(context, iconValue))
-                        .setExtras(bundle)
-                        .build(), MediaBrowser.MediaItem.FLAG_PLAYABLE);
-                mediaItems.add(mediaItem);
+                mediaItems.add(stream.toMediaItem(context));
             }
         }
         result.sendResult(mediaItems);
@@ -113,21 +84,7 @@ public class API2Media {
                              for(Stream stream : nowPlaying.streams){
                                  if(streamID == stream.id){
                                      if(!lastSong.equals(stream.current_song.id)){
-                                         MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                                 .putString(MediaMetadata.METADATA_KEY_MEDIA_ID, stream.current_song.id)
-                                                 .putString(MediaMetadata.METADATA_KEY_ARTIST, stream.current_song.artist)
-                                                 .putString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST, stream.current_song.artist)
-                                                 .putString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE, stream.current_song.artist)
-                                                 .putString(MediaMetadata.METADATA_KEY_TITLE, stream.current_song.title)
-                                                 .putString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE, stream.current_song.title)
-                                                 .putString(MediaMetadata.METADATA_KEY_ART_URI, stream.current_song.imageUri.toString())
-                                                 .putString(MediaMetadata.METADATA_KEY_ALBUM_ART_URI, stream.current_song.imageUri.toString())
-                                                 .putString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI, stream.current_song.imageUri.toString())
-                                                 .putRating(MediaMetadata.METADATA_KEY_RATING, Rating.newThumbRating(false))
-                                                 .putString(MediaMetadata.METADATA_KEY_DISPLAY_DESCRIPTION, stream.current_song.text)
-                                                 .putString(METADATA_KEY_STREAM_URI, stream.uri.toString())
-                                                 .build();
-                                         cb.onNowPlaying(mediaMetadata);
+                                         cb.onNowPlaying(stream.toMediaItem(), stream.current_song.toMediaMetadata());
                                      }
                                  }
                              }
@@ -151,7 +108,7 @@ public class API2Media {
     }
 
     public interface CallBack{
-        public void onNowPlaying(MediaMetadata nowPlaying);
+        public void onNowPlaying(MediaBrowser.MediaItem stream, MediaMetadata nowPlaying);
     }
 
 }
