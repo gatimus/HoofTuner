@@ -57,6 +57,7 @@ public class PVLMediaBrowserService extends MediaBrowserService implements Media
 
     @Override
     public BrowserRoot onGetRoot(String clientPackageName, int clientUid, Bundle rootHints) {
+        //?
         PonyvilleLive.getPonyvilleLiveInterface().listStations(Station.AUDIO, new Callback<Response<StationList>>() {
             @Override
             public void success(Response<StationList> stationListResponse, retrofit.client.Response response) {
