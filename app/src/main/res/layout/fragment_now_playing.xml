@@ -35,7 +35,7 @@
             android:orientation="vertical">
 
 
-            <io.github.gatimus.hooftuner.customviews.PVLTextView
+            <TextView
                 android:id="@+id/song_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

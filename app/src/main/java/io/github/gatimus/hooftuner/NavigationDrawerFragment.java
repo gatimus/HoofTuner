@@ -5,10 +5,13 @@ import android.app.Activity;
 import android.app.ListFragment;
 import android.content.ComponentName;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.browse.MediaBrowser;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,7 +86,9 @@ public class NavigationDrawerFragment extends ListFragment {
         super.onListItemClick(l, v, position, id);
         Station selectedStation = Cache.stations.get(position);
         final ActionBar actionBar = getActivity().getActionBar();
-        actionBar.setTitle(selectedStation.name);
+        SpannableString s = new SpannableString(selectedStation.name);
+        s.setSpan(Typeface.createFromAsset(getActivity().getAssets(), "fonts/SourceSansPro-Regular.ttf"), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        actionBar.setTitle(s);
         PicassoWrapper.getStationPicasso(getActivity(), selectedStation.imageUri.toString())
                 .into(new Target() {
                     @Override

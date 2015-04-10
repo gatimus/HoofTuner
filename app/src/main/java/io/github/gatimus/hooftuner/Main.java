@@ -2,6 +2,7 @@ package io.github.gatimus.hooftuner;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import io.github.gatimus.hooftuner.pvl.Station;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class Main extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks{
 
@@ -21,13 +23,23 @@ public class Main extends Activity implements NavigationDrawerFragment.Navigatio
     private DrawerLayout drawerLayout;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        actionBar = getActionBar();
+
+        //SpannableString s = new SpannableString(getResources().getString(R.string.app_name));
+        //s.setSpan(Typeface.createFromAsset(getAssets(), "fonts/SourceSansPro-Regular.ttf"), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //actionBar.setTitle(s);
 
         //Set up Navigation Drawer
-        actionBar = getActionBar();
+
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);

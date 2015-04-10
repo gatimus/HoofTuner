@@ -102,12 +102,14 @@ public class TweetFragment extends ListFragment implements ListView.OnItemClickL
                 .setOAuthConsumerSecret("--")
                 .setOAuthAccessToken("--")
                 .setOAuthAccessTokenSecret("--");
+
         ConfigurationBuilder cb2 = new ConfigurationBuilder();
         if(BuildConfig.DEBUG)cb2.setDebugEnabled(true);
         cb2.setOAuthConsumerKey("--")
                 .setOAuthConsumerSecret("--")
                 .setOAuthAccessToken("--")
                 .setOAuthAccessTokenSecret("--");
+
         stream = new TwitterStreamFactory(cb.build()).getInstance();
         stream.addListener(new UserStreamListener() {
             @Override

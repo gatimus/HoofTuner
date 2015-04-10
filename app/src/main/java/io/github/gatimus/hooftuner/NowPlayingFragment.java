@@ -192,7 +192,7 @@ public class NowPlayingFragment extends Fragment implements Callback<Response<No
     public void onDetach() {
         super.onDetach();
         //TODO
-        scheduledUpdate.cancel(true);
+        //scheduledUpdate.cancel(true);
     }
 
     @Override

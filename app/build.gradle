@@ -24,7 +24,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'org.twitter4j:twitter4j:4.0.2'
     compile 'org.twitter4j:twitter4j-core:4.0.2'
@@ -37,4 +37,5 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.0'
     compile 'com.joanzapata.android:android-iconify:1.0.9'
     compile 'org.apache.commons:commons-lang3:3.3.2'
+    compile 'uk.co.chrisjenx:calligraphy:2.0.2'
 }

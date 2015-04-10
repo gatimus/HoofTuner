@@ -6,6 +6,7 @@
     <style name="PonyvilleLive" parent="@style/_PonyvilleLive">
         <item name="android:colorPrimaryDark">@color/list_bg</item>
         <item name="android:colorAccent">@color/ponyvillelive_color</item>
+        <item name="android:textViewStyle">@style/TextViewPonyvilleLive</item>
     </style>
 
     <style name="_PonyvilleLive" parent="android:Theme.Holo.Light.DarkActionBar">

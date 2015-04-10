@@ -3,6 +3,10 @@
 <!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <style name="TextViewPonyvilleLive" parent="android:Widget.Holo.Light.TextView">
+        <item name="fontPath">fonts/SourceSansPro-Regular.ttf</item>
+    </style>
+
     <style name="ListViewPonyvilleLive" parent="android:Widget.Holo.Light.ListView">
         <item name="android:background">@color/list_bg</item>
     </style>
