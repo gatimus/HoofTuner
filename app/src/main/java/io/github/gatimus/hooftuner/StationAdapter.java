@@ -1,51 +1,45 @@
 package io.github.gatimus.hooftuner;
 
 import android.content.Context;
+import android.media.browse.MediaBrowser;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.IconTextView;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.joanzapata.android.iconify.Iconify;
 
 import java.util.List;
 
-import io.github.gatimus.hooftuner.pvl.Station;
-import io.github.gatimus.hooftuner.utils.PicassoWrapper;
-
-public class StationAdapter extends ArrayAdapter<Station> {
+public class StationAdapter extends RecyclerView.Adapter<StationHolder> {
 
     private Context context;
-    private List<Station> stations;
+    private List<MediaBrowser.MediaItem> mediaItems;
 
-    public StationAdapter(Context context, List<Station> objects) {
-        super(context, R.layout.station_list_item, objects);
+    public StationAdapter(Context context, List<MediaBrowser.MediaItem> objects){
         this.context = context;
-        stations = objects;
+        this.mediaItems = objects;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public StationHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View rowView = inflater.inflate(R.layout.station_list_item, parent, false);
-        Station station = stations.get(position);
+        View view = inflater.inflate(R.layout.station_list_item, viewGroup, false);
+        return new StationHolder(view);
+    }
 
-        ImageView stationImage = (ImageView) rowView.findViewById(R.id.stationImage);
-        TextView name = (TextView) rowView.findViewById(android.R.id.text1);
-        TextView genre = (TextView) rowView.findViewById(android.R.id.text2);
-        IconTextView category = (IconTextView) rowView.findViewById(R.id.category);
+    @Override
+    public void onBindViewHolder(StationHolder stationHolder, int i) {
+        MediaBrowser.MediaItem station = mediaItems.get(i);
+        stationHolder.setUI(context, station);
+    }
 
-        name.setText(station.name);
-        genre.setText(station.genre);
-        PicassoWrapper.getStationPicasso(context, station.imageUri.toString())
-                .into(stationImage);
-        if(station.category.equals(Station.AUDIO)) category.setText(Iconify.compute("{fa-music}"));
-        if(station.category.equals(Station.VIDEO)) category.setText(Iconify.compute("{fa-video-camera}"));
 
-        return rowView;
-    } //getView
+    @Override
+    public int getItemCount() {
+        int count = 0;
+        if(mediaItems != null){
+            count = mediaItems.size();
+        }
+        return count;
+    }
 
 }

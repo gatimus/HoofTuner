@@ -57,6 +57,7 @@ public class Song {
                 .putString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI, imageUri.toString())
                 .putRating(MediaMetadata.METADATA_KEY_RATING, android.media.Rating.newThumbRating(false))
                 .putString(MediaMetadata.METADATA_KEY_DISPLAY_DESCRIPTION, text)
+                .putLong(MediaMetadata.METADATA_KEY_DURATION, 100L)
                 .build();
     }
 

@@ -1,35 +1,24 @@
 package io.github.gatimus.hooftuner;
 
-import android.app.ActionBar;
 import android.app.Activity;
-import android.app.ListFragment;
+import android.app.Fragment;
 import android.content.ComponentName;
-import android.graphics.Bitmap;
-import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.browse.MediaBrowser;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
 import java.util.List;
-
 import io.github.gatimus.hooftuner.pvl.Station;
-import io.github.gatimus.hooftuner.utils.PicassoWrapper;
 
-public class NavigationDrawerFragment extends ListFragment {
+public class NavigationDrawerFragment extends Fragment {
 
     private NavigationDrawerCallbacks callbackActivity;
     private MediaBrowser mediaBrowser;
+    private RecyclerView recyclerView;
 
     private MediaBrowser.ConnectionCallback connectionCallback = new MediaBrowser.ConnectionCallback(){
         @Override
@@ -38,9 +27,12 @@ public class NavigationDrawerFragment extends ListFragment {
                 @Override
                 public void onChildrenLoaded(String parentId, List<MediaBrowser.MediaItem> children) {
                     //StationAdapter stationAdapter = new StationAdapter(getActivity().getApplicationContext(), Cache.stations);
-                    MediaItemAdapter stationAdapter = new MediaItemAdapter(getActivity(), children);
-                    stationAdapter.setNotifyOnChange(true);
-                    setListAdapter(stationAdapter);
+                    if(getActivity() != null){
+                        StationAdapter stationAdapter = new StationAdapter(getActivity(), children);
+                        recyclerView.setAdapter(stationAdapter);
+
+                    }
+
                 }
             });
         }
@@ -62,7 +54,9 @@ public class NavigationDrawerFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return (ListView)inflater.inflate(R.layout.fragment_navigation_drawer, container);
+        recyclerView = (RecyclerView)inflater.inflate(R.layout.fragment_navigation_drawer, container);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        return recyclerView;
     }
 
     @Override
@@ -81,33 +75,14 @@ public class NavigationDrawerFragment extends ListFragment {
         callbackActivity = null;
     }
 
+    /*
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         Station selectedStation = Cache.stations.get(position);
-        final ActionBar actionBar = getActivity().getActionBar();
-        SpannableString s = new SpannableString(selectedStation.name);
-        s.setSpan(Typeface.createFromAsset(getActivity().getAssets(), "fonts/SourceSansPro-Regular.ttf"), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        actionBar.setTitle(s);
-        PicassoWrapper.getStationPicasso(getActivity(), selectedStation.imageUri.toString())
-                .into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        actionBar.setIcon(new BitmapDrawable(getResources(), bitmap));
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
-                        actionBar.setIcon(R.drawable.icon);
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-                        actionBar.setIcon(R.drawable.icon);
-                    }
-                });
         callbackActivity.onNavigationDrawerItemSelected(selectedStation);
     }
+    */
 
     public static interface NavigationDrawerCallbacks {
         void onNavigationDrawerItemSelected(Station station);

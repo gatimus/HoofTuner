@@ -1,6 +1,5 @@
 package io.github.gatimus.hooftuner;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.media.MediaMetadata;
@@ -17,37 +16,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.joanzapata.android.iconify.Iconify;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-
 import io.github.gatimus.hooftuner.customviews.VisualizerView;
 import io.github.gatimus.hooftuner.pvl.NowPlaying;
-import io.github.gatimus.hooftuner.pvl.PonyvilleLive;
-import io.github.gatimus.hooftuner.pvl.Response;
 import io.github.gatimus.hooftuner.pvl.Station;
 import io.github.gatimus.hooftuner.utils.PicassoWrapper;
-import retrofit.Callback;
-import retrofit.RetrofitError;
 
-public class NowPlayingFragment extends Fragment implements Callback<Response<NowPlaying>> {
+public class NowPlayingFragment extends Fragment {
 
     private static final String SHORT_CODE = "SHORT_CODE";
 
     private TextView listeners, songArtist, songTitle, event, eventUpComing, score;
     private ImageView songImage;
     private ToggleButton play;
-
-    private NowPlaying nowPlaying = new NowPlaying();
-    private ScheduledExecutorService updateScheduler;
-    private ScheduledFuture scheduledUpdate;
-    private Updater updater;
-
     private MediaBrowser mMediaBrowser;
     private MediaController.TransportControls transportControls;
-
     private String stationShortcode;
 
     public static NowPlayingFragment newInstance(Station station) {
@@ -60,13 +42,6 @@ public class NowPlayingFragment extends Fragment implements Callback<Response<No
 
     public NowPlayingFragment() {
         //empty constructor
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        //TODO
-
     }
 
     private MediaBrowser.ConnectionCallback mConnectionCallback = new MediaBrowser.ConnectionCallback() {
@@ -114,6 +89,12 @@ public class NowPlayingFragment extends Fragment implements Callback<Response<No
             Log.v(getClass().getSimpleName(), metadata.toString());
             songArtist.setText(metadata.getString(MediaMetadata.METADATA_KEY_ARTIST));
             songTitle.setText(metadata.getString(MediaMetadata.METADATA_KEY_TITLE));
+            if(!metadata.getString(MediaMetadata.METADATA_KEY_ART_URI).isEmpty()){
+                PicassoWrapper.getSongPicasso(getActivity(),metadata.getString(MediaMetadata.METADATA_KEY_ART_URI), stationShortcode);
+            } else {
+                PicassoWrapper.getSongPicasso(getActivity(), stationShortcode);
+            }
+            Log.v(getClass().getSimpleName(), stationShortcode);
         }
     };
 
@@ -123,10 +104,6 @@ public class NowPlayingFragment extends Fragment implements Callback<Response<No
         if(getArguments() != null){
             stationShortcode = getArguments().getString(SHORT_CODE);
         }
-        //threading
-        updateScheduler = Executors.newScheduledThreadPool(1);
-        updater = new Updater();
-        //scheduledUpdate = updateScheduler.scheduleWithFixedDelay(updater, 0 , 5_000, TimeUnit.MILLISECONDS);
 
         mMediaBrowser = new MediaBrowser(
                 getActivity(),
@@ -188,33 +165,12 @@ public class NowPlayingFragment extends Fragment implements Callback<Response<No
         frameLayout.addView(new VisualizerView(getActivity().getApplicationContext()));
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        //TODO
-        //scheduledUpdate.cancel(true);
-    }
 
-    @Override
-    public void success(Response<NowPlaying> nowPlayingResponse, retrofit.client.Response response) {
-        updateNowPlaying(nowPlayingResponse.result);
-    }
 
-    @Override
-    public void failure(RetrofitError error) {
-        Log.e(getClass().getSimpleName(), error.toString());
-    }
 
-    public class Updater implements Runnable {
-        @Override
-        public void run() {
-            if(!stationShortcode.equals("")){
-                PonyvilleLive.getPonyvilleLiveInterface().nowPlaying(stationShortcode, NowPlayingFragment.this);
-            }
-        }
-    }
 
     public void updateNowPlaying(NowPlaying nowPlaying){
+        /*
         if(!this.nowPlaying.current_song.id.equals(nowPlaying.current_song.id)){
             this.nowPlaying = nowPlaying;
             score.setText(String.valueOf(nowPlaying.current_song.score));
@@ -258,6 +214,7 @@ public class NowPlayingFragment extends Fragment implements Callback<Response<No
                 PicassoWrapper.getSongPicasso(getActivity().getApplicationContext(), nowPlaying.station.shortcode).into(songImage);
             }
         }
+        */
     }
 
 } //class

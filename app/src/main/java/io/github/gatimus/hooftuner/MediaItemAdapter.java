@@ -14,12 +14,14 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import io.github.gatimus.hooftuner.utils.PicassoWrapper;
+
 public class MediaItemAdapter extends ArrayAdapter<MediaBrowser.MediaItem>{
 
     private Context context;
     private List<MediaBrowser.MediaItem> mediaItems;
 
-    public MediaItemAdapter(Context context,List<MediaBrowser.MediaItem> objects) {
+    public MediaItemAdapter(Context context, List<MediaBrowser.MediaItem> objects) {
         super(context, R.layout.station_list_item, objects);
         this.context = context;
         this.mediaItems = objects;
@@ -39,6 +41,10 @@ public class MediaItemAdapter extends ArrayAdapter<MediaBrowser.MediaItem>{
         name.setText(mediaItem.getDescription().getTitle());
         genre.setText(mediaItem.getDescription().getSubtitle());
         Picasso.with(context).load(mediaItem.getDescription().getIconUri()).into(stationImage);
+        PicassoWrapper.getStationPicasso(context, mediaItem.getDescription().getIconUri())
+                .into(stationImage);
+        //if(station.category.equals(Station.AUDIO)) category.setText(Iconify.compute("{fa-music}"));
+        //if(station.category.equals(Station.VIDEO)) category.setText(Iconify.compute("{fa-video-camera}"));
 
         return rowView;
     }

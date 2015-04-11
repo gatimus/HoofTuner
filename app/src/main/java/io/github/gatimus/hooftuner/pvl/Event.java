@@ -11,8 +11,10 @@ public class Event {
     //public Date end_time;
     public boolean is_all_day;
     public String title;
-    public Object location;
+    public String location;
     public String body;
+    //@SerializedName("banner_url")
+    //public Uri bannerUri;
     public URL web_url;
     public boolean is_promoted;
     public int minutes_until;

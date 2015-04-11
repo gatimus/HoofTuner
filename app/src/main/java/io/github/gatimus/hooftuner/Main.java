@@ -4,17 +4,28 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
 import io.github.gatimus.hooftuner.pvl.Station;
+import io.github.gatimus.hooftuner.utils.PicassoWrapper;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class Main extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks{
+
+    private static final String STATION_NAME = "STATION_NAME";
+    private static final String STATION_IMAGE = "STATION_IMAGE";
 
     private Station selectedStation = new Station();
 
@@ -33,10 +44,9 @@ public class Main extends Activity implements NavigationDrawerFragment.Navigatio
         setContentView(R.layout.activity_main);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         actionBar = getActionBar();
-
-        //SpannableString s = new SpannableString(getResources().getString(R.string.app_name));
-        //s.setSpan(Typeface.createFromAsset(getAssets(), "fonts/SourceSansPro-Regular.ttf"), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        //actionBar.setTitle(s);
+        if(savedInstanceState != null){
+            updateActionBar(savedInstanceState.getCharSequence(STATION_NAME), (Uri)savedInstanceState.getParcelable(STATION_IMAGE));
+        }
 
         //Set up Navigation Drawer
 
@@ -50,6 +60,13 @@ public class Main extends Activity implements NavigationDrawerFragment.Navigatio
                 R.string.navigation_drawer_close
         );
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putCharSequence(STATION_NAME, actionBar.getTitle());
+        outState.putParcelable(STATION_IMAGE, selectedStation.imageUri);
     }
 
     @Override
@@ -103,6 +120,28 @@ public class Main extends Activity implements NavigationDrawerFragment.Navigatio
     public void onNavigationDrawerItemSelected(Station station) {
         drawerLayout.closeDrawers();
         updateStation(station);
+        updateActionBar(station.name, station.imageUri);
+    }
+
+    public void updateActionBar(CharSequence name, Uri image){
+        actionBar.setTitle(name);
+        PicassoWrapper.getStationPicasso(getApplicationContext(), image)
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        actionBar.setIcon(new BitmapDrawable(getResources(), bitmap));
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+                        actionBar.setIcon(R.drawable.icon);
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        actionBar.setIcon(R.drawable.icon);
+                    }
+                });
     }
 
     /*
