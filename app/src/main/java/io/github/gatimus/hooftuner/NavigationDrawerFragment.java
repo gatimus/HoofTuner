@@ -11,10 +11,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
 import java.util.List;
 import io.github.gatimus.hooftuner.pvl.Station;
 
-public class NavigationDrawerFragment extends Fragment {
+public class NavigationDrawerFragment extends Fragment implements ListView.OnItemClickListener{
 
     private NavigationDrawerCallbacks callbackActivity;
     private MediaBrowser mediaBrowser;
@@ -28,7 +31,7 @@ public class NavigationDrawerFragment extends Fragment {
                 public void onChildrenLoaded(String parentId, List<MediaBrowser.MediaItem> children) {
                     //StationAdapter stationAdapter = new StationAdapter(getActivity().getApplicationContext(), Cache.stations);
                     if(getActivity() != null){
-                        StationAdapter stationAdapter = new StationAdapter(getActivity(), children);
+                        StationAdapter stationAdapter = new StationAdapter(getActivity(), children, NavigationDrawerFragment.this);
                         recyclerView.setAdapter(stationAdapter);
 
                     }
@@ -73,6 +76,12 @@ public class NavigationDrawerFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         callbackActivity = null;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Station selectedStation = Cache.stations.get(position);
+        callbackActivity.onNavigationDrawerItemSelected(selectedStation);
     }
 
     /*
