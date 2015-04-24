@@ -1,8 +1,10 @@
 package io.github.gatimus.hooftuner;
 
 import android.app.Activity;
-import android.app.ListFragment;
+import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,11 +53,11 @@ import twitter4j.auth.OAuth2Token;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.ConfigurationBuilder;
 
-public class TweetFragment extends ListFragment implements ListView.OnItemClickListener {
+public class TweetFragment extends Fragment implements ListView.OnItemClickListener {
 
     private static final String TWITTER_URL = "twitter_url";
     private String twitterURL;
-    private ListView listView;
+    private RecyclerView recyclerView;
     private ProgressBar progressBar;
 
     private AsyncTwitter twitter;
@@ -66,11 +68,13 @@ public class TweetFragment extends ListFragment implements ListView.OnItemClickL
     private TweetAdapter tweetAdapter;
 
     public static TweetFragment newInstance(Station station) {
-        Log.v("TweetFragment", "newInstance");
         TweetFragment fragment = new TweetFragment();
-        Bundle args = new Bundle();
-        args.putString(TWITTER_URL, station.twitter_url.toString());
-        fragment.setArguments(args);
+        if(station.twitter_url != null){
+            Bundle args = new Bundle();
+            args.putString(TWITTER_URL, station.twitter_url.toString());
+            fragment.setArguments(args);
+        }
+
         return fragment;
     }
 
@@ -79,14 +83,12 @@ public class TweetFragment extends ListFragment implements ListView.OnItemClickL
 
     @Override
     public void onAttach(Activity activity) {
-        Log.v(getClass().getSimpleName(), "attach");
         super.onAttach(activity);
         //TODO
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.v(getClass().getSimpleName(), "create");
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             twitterURL = getArguments().getString(TWITTER_URL);
@@ -94,21 +96,21 @@ public class TweetFragment extends ListFragment implements ListView.OnItemClickL
 
         tweets = new ArrayList<Status>();
         tweetAdapter = new TweetAdapter(getActivity(), tweets);
-        tweetAdapter.setNotifyOnChange(true);
+        //tweetAdapter.setNotifyOnChange(true);
 
         ConfigurationBuilder cb = new ConfigurationBuilder();
         if(BuildConfig.DEBUG)cb.setDebugEnabled(true);
-        cb.setOAuthConsumerKey("--")
-                .setOAuthConsumerSecret("--")
-                .setOAuthAccessToken("--")
-                .setOAuthAccessTokenSecret("--");
+        cb.setOAuthConsumerKey("7mW6uHRl8gddAZCbKIYXYhTsI")
+                .setOAuthConsumerSecret("GIFuoOYD2M3LhTKwkdy1u4ushotItQab960dd8ZlFfCdJdSlVz")
+                .setOAuthAccessToken("602173599-jiWfmGF69RWHz0aJr1lTXxHnK9ONBQwGFjH76JKr")
+                .setOAuthAccessTokenSecret("ocPLhUJ2HupJU47sKqUOs99eiTM2SPGjpBYgPjwhNGdGK");
 
         ConfigurationBuilder cb2 = new ConfigurationBuilder();
         if(BuildConfig.DEBUG)cb2.setDebugEnabled(true);
-        cb2.setOAuthConsumerKey("--")
-                .setOAuthConsumerSecret("--")
-                .setOAuthAccessToken("--")
-                .setOAuthAccessTokenSecret("--");
+        cb2.setOAuthConsumerKey("7mW6uHRl8gddAZCbKIYXYhTsI")
+                .setOAuthConsumerSecret("GIFuoOYD2M3LhTKwkdy1u4ushotItQab960dd8ZlFfCdJdSlVz")
+                .setOAuthAccessToken("602173599-jiWfmGF69RWHz0aJr1lTXxHnK9ONBQwGFjH76JKr")
+                .setOAuthAccessTokenSecret("ocPLhUJ2HupJU47sKqUOs99eiTM2SPGjpBYgPjwhNGdGK");
 
         stream = new TwitterStreamFactory(cb.build()).getInstance();
         stream.addListener(new UserStreamListener() {
@@ -253,6 +255,7 @@ public class TweetFragment extends ListFragment implements ListView.OnItemClickL
                     public void run() {
                         tweets.addAll(statuses);
                         tweetAdapter.notifyDataSetChanged();
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
             }
@@ -443,7 +446,6 @@ public class TweetFragment extends ListFragment implements ListView.OnItemClickL
                 int i = 0;
                 for(User user : users){
                     userIDs[i] = user.getId();
-                    Log.v(getClass().getSimpleName(), user.getScreenName() + String.valueOf(user.getId()));
                 }
                 stream.filter(new FilterQuery().follow(userIDs));
             }
@@ -718,25 +720,22 @@ public class TweetFragment extends ListFragment implements ListView.OnItemClickL
 
             }
         });
-        twitter.getUserTimeline(twitterURL.substring(twitterURL.lastIndexOf("/") + 1));
-        twitter.lookupUsers(new String[]{twitterURL.substring(twitterURL.lastIndexOf("/") + 1)});
-
+        if(twitterURL != null){
+            twitter.getUserTimeline(twitterURL.substring(twitterURL.lastIndexOf("/") + 1));
+            twitter.lookupUsers(new String[]{twitterURL.substring(twitterURL.lastIndexOf("/") + 1)});
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v(getClass().getSimpleName(), "create view");
         View view = inflater.inflate(R.layout.fragment_tweet, container, false);
-        listView = (ListView) view.findViewById(android.R.id.list);
+        recyclerView = (RecyclerView) view.findViewById(android.R.id.list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         progressBar = (ProgressBar) view.findViewById(android.R.id.empty);
-        listView.setEmptyView(progressBar);
-        listView.setOnItemClickListener(this);
+        //recyclerView.setEmptyView(progressBar);
 
-        listView.setAdapter(tweetAdapter);
+        recyclerView.setAdapter(tweetAdapter);
 
-
-        // Set the adapter
-        setListAdapter(tweetAdapter);
 
 
         return view;
@@ -744,7 +743,6 @@ public class TweetFragment extends ListFragment implements ListView.OnItemClickL
 
     @Override
     public void onDetach() {
-        Log.v(getClass().getSimpleName(), "detach");
         super.onDetach();
     } //onDetach
 

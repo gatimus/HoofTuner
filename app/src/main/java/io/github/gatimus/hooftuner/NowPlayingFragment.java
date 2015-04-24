@@ -11,21 +11,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import io.github.gatimus.hooftuner.customviews.VisualizerView;
-import io.github.gatimus.hooftuner.pvl.NowPlaying;
 import io.github.gatimus.hooftuner.pvl.Station;
 import io.github.gatimus.hooftuner.utils.PicassoWrapper;
 
-public class NowPlayingFragment extends Fragment {
+public class NowPlayingFragment extends Fragment implements CompoundButton.OnCheckedChangeListener{
 
     private static final String SHORT_CODE = "SHORT_CODE";
 
-    private TextView listeners, songArtist, songTitle, event, eventUpComing, score;
+    private TextView listeners, songArtist, songTitle, event, eventUpComing, score, buff;
     private ImageView songImage;
     private ToggleButton play;
     private MediaBrowser mMediaBrowser;
@@ -72,14 +74,24 @@ public class NowPlayingFragment extends Fragment {
         @Override
         public void onPlaybackStateChanged(PlaybackState state) {
             if(state.getState() == PlaybackState.STATE_PLAYING){
-                play.setEnabled(true);
+                buff.clearAnimation();
+                buff.setVisibility(View.INVISIBLE);
+                play.setVisibility(View.VISIBLE);
                 play.setChecked(true);
             }
             if(state.getState() == PlaybackState.STATE_BUFFERING){
-                play.setEnabled(false);
+                play.setVisibility(View.INVISIBLE);
+                buff.setVisibility(View.VISIBLE);
+                if(getActivity() != null){
+                    Animation rotate = AnimationUtils.loadAnimation(getActivity(), R.anim.buff);
+                    buff.startAnimation(rotate);
+                }
+
             }
             if(state.getState() == PlaybackState.STATE_PAUSED || state.getState() == PlaybackState.STATE_STOPPED){
-                play.setEnabled(true);
+                buff.clearAnimation();
+                buff.setVisibility(View.INVISIBLE);
+                play.setVisibility(View.VISIBLE);
                 play.setChecked(false);
             }
         }
@@ -141,6 +153,8 @@ public class NowPlayingFragment extends Fragment {
         eventUpComing = (TextView) view.findViewById(R.id.event_upcoming);
         songImage = (ImageView) view.findViewById(R.id.song_image);
         play = (ToggleButton) view.findViewById(R.id.play);
+        play.setOnCheckedChangeListener(this);
+        buff = (TextView) view.findViewById(R.id.buff);
         /*
         play.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -166,55 +180,14 @@ public class NowPlayingFragment extends Fragment {
     }
 
 
-
-
-
-    public void updateNowPlaying(NowPlaying nowPlaying){
-        /*
-        if(!this.nowPlaying.current_song.id.equals(nowPlaying.current_song.id)){
-            this.nowPlaying = nowPlaying;
-            score.setText(String.valueOf(nowPlaying.current_song.score));
-            listeners.setText(String.valueOf(nowPlaying.listeners.current) + "{fa-user}");
-            songArtist.setText(nowPlaying.current_song.artist);
-            songTitle.setText(nowPlaying.current_song.title);
-            if(nowPlaying.event != null){
-                Iconify.addIcons(event);
-                event.setText("On Air: " + nowPlaying.event.toString());
-            } else {
-                event.setText("");
-            }
-            if(nowPlaying.event_upcoming != null){
-                eventUpComing.setText("Upcoming: " + nowPlaying.event_upcoming.toString());
-            } else {
-                eventUpComing.setText("");
-            }
-
-            if(nowPlaying.current_song.external != null){
-                if(nowPlaying.current_song.external.bronytunes != null){
-                    PicassoWrapper.getSongPicasso(
-                            getActivity().getApplicationContext(),
-                            nowPlaying.current_song.external.bronytunes.image_url.toString(),
-                            nowPlaying.station.shortcode
-                    ).into(songImage);
-                }else if (nowPlaying.current_song.external.ponyfm != null){
-                    PicassoWrapper.getSongPicasso(
-                            getActivity().getApplicationContext(),
-                            nowPlaying.current_song.external.ponyfm.image_url.toString(),
-                            nowPlaying.station.shortcode
-                    ).into(songImage);
-                }else if(nowPlaying.current_song.external.eqbeats != null) {
-                    PicassoWrapper.getSongPicasso(
-                            getActivity().getApplicationContext(),
-                            nowPlaying.current_song.external.eqbeats.image_url.toString(),
-                            nowPlaying.station.shortcode
-                    ).into(songImage);
-                }
-
-            }else{
-                PicassoWrapper.getSongPicasso(getActivity().getApplicationContext(), nowPlaying.station.shortcode).into(songImage);
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if(transportControls != null){
+            if(isChecked){
+                transportControls.play();
+            }else {
+                transportControls.pause();
             }
         }
-        */
     }
-
 } //class
