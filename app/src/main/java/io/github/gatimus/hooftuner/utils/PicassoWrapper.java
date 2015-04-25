@@ -6,14 +6,13 @@ import android.net.Uri;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
-import io.github.gatimus.hooftuner.BuildConfig;
 import io.github.gatimus.hooftuner.R;
 
 public class PicassoWrapper {
 
     public static Picasso getPicasso(Context context){
         Picasso picasso = Picasso.with(context);
-        if(BuildConfig.DEBUG)picasso.setIndicatorsEnabled(true);
+        //if(BuildConfig.DEBUG)picasso.setIndicatorsEnabled(true);
         return picasso;
     }
 

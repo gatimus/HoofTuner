@@ -11,6 +11,8 @@ import java.net.URL;
 
 public class Song {
 
+    public static String KEY_SCORE = "KEY_SCORE";
+
     public String id = "";
     public String text;
     public String artist;

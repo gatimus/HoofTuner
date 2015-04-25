@@ -20,7 +20,9 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import io.github.gatimus.hooftuner.customviews.VisualizerView;
+import io.github.gatimus.hooftuner.pvl.Song;
 import io.github.gatimus.hooftuner.pvl.Station;
+import io.github.gatimus.hooftuner.pvl.Stream;
 import io.github.gatimus.hooftuner.utils.PicassoWrapper;
 
 public class NowPlayingFragment extends Fragment implements CompoundButton.OnCheckedChangeListener{
@@ -30,6 +32,7 @@ public class NowPlayingFragment extends Fragment implements CompoundButton.OnChe
     private TextView listeners, songArtist, songTitle, event, eventUpComing, score, buff;
     private ImageView songImage;
     private ToggleButton play;
+    FrameLayout frameLayout;
     private MediaBrowser mMediaBrowser;
     private MediaController.TransportControls transportControls;
     private String stationShortcode;
@@ -101,10 +104,12 @@ public class NowPlayingFragment extends Fragment implements CompoundButton.OnChe
             Log.v(getClass().getSimpleName(), metadata.toString());
             songArtist.setText(metadata.getString(MediaMetadata.METADATA_KEY_ARTIST));
             songTitle.setText(metadata.getString(MediaMetadata.METADATA_KEY_TITLE));
+            score.setText(metadata.getString(Song.KEY_SCORE));
+            listeners.setText(metadata.getString(Stream.KEY_LISTENERS)+"{fa-user}");
             if(!metadata.getString(MediaMetadata.METADATA_KEY_ART_URI).isEmpty()){
-                PicassoWrapper.getSongPicasso(getActivity(),metadata.getString(MediaMetadata.METADATA_KEY_ART_URI), stationShortcode);
+                PicassoWrapper.getSongPicasso(getActivity(),metadata.getString(MediaMetadata.METADATA_KEY_ART_URI), stationShortcode).into(songImage);
             } else {
-                PicassoWrapper.getSongPicasso(getActivity(), stationShortcode);
+                PicassoWrapper.getSongPicasso(getActivity(), stationShortcode).into(songImage);
             }
             Log.v(getClass().getSimpleName(), stationShortcode);
         }
@@ -155,27 +160,9 @@ public class NowPlayingFragment extends Fragment implements CompoundButton.OnChe
         play = (ToggleButton) view.findViewById(R.id.play);
         play.setOnCheckedChangeListener(this);
         buff = (TextView) view.findViewById(R.id.buff);
-        /*
-        play.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(nowPlaying.station != null){
-                    Intent iStop = new Intent(getActivity(), MusicService.class)
-                        .setAction(MusicService.ACTION_STOP);
-                    getActivity().startService(iStop);
-                    if(isChecked){
-                        Intent iStart = new Intent(getActivity(), MusicService.class)
-                                .setAction(MusicService.ACTION_PLAY)
-                                .putExtra(MusicService.KEY_STREAM_URL, nowPlaying.station.stream_url.toString());
-                        getActivity().startService(iStart);
-                    }
-                }
-            }
-        });
-        */
 
         //vis
-        FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.vis_container);
+        frameLayout = (FrameLayout) view.findViewById(R.id.vis_container);
         frameLayout.addView(new VisualizerView(getActivity().getApplicationContext()));
     }
 
@@ -190,4 +177,6 @@ public class NowPlayingFragment extends Fragment implements CompoundButton.OnChe
             }
         }
     }
+
+
 } //class

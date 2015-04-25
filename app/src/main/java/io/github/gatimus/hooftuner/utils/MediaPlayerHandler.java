@@ -30,7 +30,6 @@ public class MediaPlayerHandler implements
     }
 
     private void constructPlayer() {
-        Log.v(getClass().getSimpleName(),"constructPlayer()");
         player = new MediaPlayer();
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         player.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);
@@ -39,7 +38,6 @@ public class MediaPlayerHandler implements
     }
 
     public void playRemoteResource(Uri url) {
-        Log.v(getClass().getSimpleName(),"playRemoteResource"+url.toString());
         currentUri = url;
         constructPlayer();
         requestAudioFocus();
@@ -54,7 +52,6 @@ public class MediaPlayerHandler implements
     }
 
     private void requestAudioFocus() {
-        Log.v(getClass().getSimpleName(),"requestAudioFocus()");
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         if(result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
@@ -72,7 +69,6 @@ public class MediaPlayerHandler implements
     }
 
     public void stopPlayback(){
-        Log.v(getClass().getSimpleName(),"stopPlayback()");
         if(player != null) {
             player.stop();
             player.release();
@@ -90,12 +86,10 @@ public class MediaPlayerHandler implements
     }
 
     public boolean playerExists(){
-        Log.v(getClass().getSimpleName(),"playerExists()" + String.valueOf(player != null));
         return player != null;
     };
 
     public void start(){
-        Log.v(getClass().getSimpleName(),"start()");
         if(playerExists()){
             if(!player.isPlaying()){
                 player.start();
@@ -108,7 +102,6 @@ public class MediaPlayerHandler implements
     }
 
     public void pause(){
-        Log.v(getClass().getSimpleName(),"pause()");
         if(playerExists()){
             if(player.isPlaying()){
                 player.pause();

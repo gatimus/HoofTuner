@@ -14,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -95,9 +96,16 @@ public class Main extends Activity implements NavigationDrawerFragment.Navigatio
             return true;
         }
         int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch(id){
+            case R.id.action_about :
+                new About().show(getFragmentManager(), getResources().getString(R.string.action_about));
+                break;
+            case R.id.action_settings :
+                //TODO
+                break;
+            case R.id.action_quit :
+                System.exit(0);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -173,5 +181,13 @@ public class Main extends Activity implements NavigationDrawerFragment.Navigatio
         });
     }
     */
+
+    public void onLike(View view){
+        //TODO
+    }
+
+    public void onDisLike(View view){
+        //TODO
+    }
 
 }

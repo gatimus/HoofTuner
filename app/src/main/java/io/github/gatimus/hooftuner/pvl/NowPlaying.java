@@ -46,6 +46,8 @@ public class NowPlaying {
                 .putString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI, selectedStream.current_song.imageUri.toString())
                 .putRating(MediaMetadata.METADATA_KEY_RATING, android.media.Rating.newThumbRating(false))
                 .putString(MediaMetadata.METADATA_KEY_DISPLAY_DESCRIPTION, selectedStream.current_song.text)
+                .putString(Song.KEY_SCORE, String.valueOf(selectedStream.current_song.score))
+                .putString(Stream.KEY_LISTENERS, String.valueOf(selectedStream.listeners.total))
                 .putLong(MediaMetadata.METADATA_KEY_DURATION, 100L)
                 .build();
     }

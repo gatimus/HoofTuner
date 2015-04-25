@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.TextView;
 import io.github.gatimus.hooftuner.pvl.PonyvilleLive;
 import io.github.gatimus.hooftuner.pvl.Response;
+import io.github.gatimus.hooftuner.pvl.Station;
 import io.github.gatimus.hooftuner.pvl.StationList;
 import io.github.gatimus.hooftuner.pvl.Status;
 import retrofit.Callback;
@@ -41,7 +42,7 @@ public class Splash extends Activity implements Callback<Response<Status>>{
         progressText.setText(statusResponse.result.timestamp.toString());
         if(statusResponse.result.online){
             if(Cache.stations.isEmpty()){
-                ponyvilleLiveInterface.listStations( new Callback<Response<StationList>>() {
+                ponyvilleLiveInterface.listStations(Station.AUDIO, new Callback<Response<StationList>>() {
                     @Override
                     public void success(Response<StationList> stationResponse, retrofit.client.Response response) {
                         Cache.stations = stationResponse.result;
@@ -52,20 +53,20 @@ public class Splash extends Activity implements Callback<Response<Status>>{
                     @Override
                     public void failure(RetrofitError error) {
                         Log.e(getClass().getSimpleName(), error.toString());
-                        progressText.setText("Celestia is not accepting letters :(");
+                        progressText.setText("Celestia is not accepting letters :( (Check network)");
                     }
                 });
             } else startActivity(intent);
 
         } else {
             Log.e(getClass().getSimpleName(), "API down");
-            progressText.setText("Celestia is not accepting letters :(");
+            progressText.setText("Celestia is not accepting letters :( (PVL! may be down)");
         }
     }
 
     @Override
     public void failure(RetrofitError error) {
         Log.e(getClass().getSimpleName(), error.toString());
-        progressText.setText("Celestia is not accepting letters :(");
+        progressText.setText("Celestia is not accepting letters :( (Check network)");
     }
 }

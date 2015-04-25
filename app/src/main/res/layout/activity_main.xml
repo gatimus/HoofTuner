@@ -20,13 +20,30 @@
             android:id="@+id/now_playing_fragment_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:layout="@layout/fragment_now_playing" />
+            tools:layout="@layout/fragment_now_playing">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <IconTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="{fa-chevron-left}"
+                    android:textSize="@dimen/abc_text_size_large_material"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/navigation_drawer_open"
+                    android:textSize="@dimen/abc_text_size_large_material"/>
+            </LinearLayout>
+        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/tweet_fragment_container"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            tools:layout="@layout/fragment_tweet" />
+            tools:layout="@layout/fragment_tweet"/>
+
 
     </LinearLayout>
 

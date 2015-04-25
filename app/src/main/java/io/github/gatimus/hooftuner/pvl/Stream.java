@@ -16,6 +16,7 @@ import io.github.gatimus.hooftuner.utils.IconBitmap;
 public class Stream {
 
     public static final String KEY_STREAM_URI = "KEY_STREAM_URI";
+    public static String KEY_LISTENERS = "KEY_LISTENERS";
 
     public int id;
     public String name;
